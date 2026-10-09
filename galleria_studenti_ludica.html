@@ -11,7 +11,6 @@
       --dimensione-foto: 440px;
 
       /* ALTRE IMPOSTAZIONI */
-      --colonne: 4;
       --spazio-colonne: 28px;
       --spazio-righe: 38px;
       --sfondo: #ffffff;
@@ -81,7 +80,7 @@
 
     .gallery {
       display: grid;
-      grid-template-columns: repeat(var(--colonne), minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--dimensione-foto)), 1fr));
       gap: var(--spazio-righe) var(--spazio-colonne);
     }
 
@@ -175,15 +174,8 @@
       display: none !important;
     }
 
-    @media (max-width: 1050px) {
-      :root {
-        --colonne: 3;
-      }
-    }
-
     @media (max-width: 760px) {
       :root {
-        --colonne: 2;
         --spazio-colonne: 18px;
         --spazio-righe: 28px;
       }
@@ -194,45 +186,12 @@
     }
 
     @media (max-width: 480px) {
-      :root {
-        --colonne: 1;
-      }
-
       .gallery-shell {
         padding: 20px 12px;
       }
     }
   </style>
-  <style>
-  :root {
-    /* CAMBIA QUESTO VALORE PER REGOLARE LE FOTO */
-    --dimensione-foto: 260px;
-  }
-
-  /* Il numero di colonne si adatta alla dimensione scelta */
-  .gallery {
-    grid-template-columns:
-      repeat(
-        auto-fit,
-        minmax(min(100%, var(--dimensione-foto)), 1fr)
-      );
-  }
-
-  .photo-box {
-    width: var(--dimensione-foto);
-    max-width: 100%;
-    height: auto;
-    aspect-ratio: 1 / 1;
-    margin: 0 auto 18px;
-  }
-
-  .student-photo {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-</style>
+  
 </head>
 
 <body>
