@@ -3,199 +3,333 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Galleria alimentata da Google Sheets">
   <title>Galleria studenti LUDiCa</title>
 
   <style>
     :root {
-      --gallery-background: #ffffff;
-      --text-color: #161616;
-      --muted-color: #4b4b4b;
-      --line-color: #dddddd;
-      --accent-color: #2463eb;
-      --columns: 4;
-      --gap-x: 28px;
-      --gap-y: 38px;
-      --icon-size: 88px;
+      /* DIMENSIONE DELLE FOTO: modifica questo valore */
+      --dimensione-foto: 180px;
+
+      /* ALTRE IMPOSTAZIONI */
+      --colonne: 4;
+      --spazio-colonne: 28px;
+      --spazio-righe: 38px;
+      --sfondo: #ffffff;
+      --testo: #161616;
+      --testo-secondario: #4b4b4b;
+      --bordo: #dddddd;
+      --accento: #2463eb;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
-      background: var(--gallery-background);
-      color: var(--text-color);
+      width: 100%;
+      background: var(--sfondo);
+      color: var(--testo);
       font-family: Arial, Helvetica, sans-serif;
     }
 
     .gallery-shell {
-      width: min(100%, 1440px);
+      width: 100%;
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 30px 40px;
+      padding: 30px 24px;
+    }
+
+    .search-area {
+      max-width: 680px;
+      margin: 0 auto 36px;
+    }
+
+    .search-label {
+      display: block;
+      margin-bottom: 9px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .search-input {
+      display: block;
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 16px;
+      border: 1px solid #b7b7b7;
+      border-radius: 7px;
+      background: #fff;
+      color: var(--testo);
+      font: inherit;
+      font-size: 16px;
+    }
+
+    .search-input:focus {
+      outline: 2px solid var(--accento);
+      outline-offset: 2px;
+    }
+
+    .search-status {
+      min-height: 20px;
+      margin: 10px 0 0;
+      color: var(--testo-secondario);
+      font-size: 14px;
     }
 
     .gallery {
       display: grid;
-      grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
-      column-gap: var(--gap-x);
-      row-gap: var(--gap-y);
+      grid-template-columns: repeat(var(--colonne), minmax(0, 1fr));
+      gap: var(--spazio-righe) var(--spazio-colonne);
     }
-
-    .search-area { max-width: 680px; margin: 0 auto 42px; }
-    .search-label { display: block; margin-bottom: 9px; font-size: 15px; font-weight: 700; }
-    .search-input {
-      width: 100%; min-height: 48px; padding: 11px 16px;
-      border: 1px solid #b7b7b7; border-radius: 7px;
-      background: #fff; color: var(--text-color); font: inherit; font-size: 16px;
-    }
-    .search-input:focus {
-      border-color: var(--accent-color); outline: 3px solid color-mix(in srgb, var(--accent-color) 22%, transparent);
-    }
-    .search-status { min-height: 20px; margin: 8px 0 0; color: var(--muted-color); font-size: 14px; }
 
     .card {
       min-width: 0;
-      padding: 0 0 16px;
-      border-bottom: 1px solid var(--line-color);
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--bordo);
       text-align: center;
+      overflow-wrap: anywhere;
     }
 
-    .card-link {
+    .card-content {
       display: flex;
-      min-height: 210px;
       flex-direction: column;
       align-items: center;
+      height: 100%;
       color: inherit;
       text-decoration: none;
-      outline: none;
     }
 
-    .card-link:hover .card-title,
-    .card-link:focus-visible .card-title { color: var(--accent-color); }
-
-    .card-link:focus-visible {
-      border-radius: 5px;
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 30%, transparent);
+    a.card-content:hover .card-title {
+      color: var(--accento);
     }
 
-    .icon-box {
+    a.card-content:focus-visible {
+      outline: 2px solid var(--accento);
+      outline-offset: 5px;
+      border-radius: 4px;
+    }
+
+    .photo-box {
       display: grid;
-      width: 100%;
-      height: 112px;
       place-items: center;
-      margin-bottom: 16px;
+      width: var(--dimensione-foto);
+      max-width: 100%;
+      aspect-ratio: 1 / 1;
+      margin: 0 auto 18px;
     }
 
-    .card-icon {
+    .student-photo {
       display: block;
-      width: var(--icon-size);
-      height: var(--icon-size);
+      width: 100%;
+      height: 100%;
+      min-height: 0;
       object-fit: contain;
     }
 
-    .card-title {
-      margin: 0 0 20px;
-      font-size: 18px;
+    .photo-placeholder {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      border-radius: 8px;
+      background: #f1f3f5;
+      color: #657080;
+      font-size: clamp(24px, 5vw, 48px);
       font-weight: 700;
-      line-height: 1.25;
-      transition: color .18s ease;
     }
 
-    .card-description {
+    .card-title {
+      margin: 0 0 10px;
+      font-size: 19px;
+      line-height: 1.3;
+    }
+
+    .card-activity,
+    .card-university {
       margin: 0;
-      color: var(--muted-color);
+      color: var(--testo-secondario);
       font-size: 15px;
       line-height: 1.5;
+      white-space: pre-line;
+    }
+
+    .card-university {
+      margin-top: 6px;
     }
 
     .message {
       max-width: 760px;
-      margin: 50px auto;
+      margin: 20px auto;
       padding: 18px 20px;
-      border: 1px solid var(--line-color);
+      border: 1px solid var(--bordo);
       border-radius: 8px;
       background: #fafafa;
       line-height: 1.55;
+      overflow-wrap: anywhere;
     }
 
-    .message[hidden] { display: none; }
+    [hidden] {
+      display: none !important;
+    }
 
     @media (max-width: 1050px) {
-      :root { --columns: 3; }
+      :root {
+        --colonne: 3;
+      }
     }
 
     @media (max-width: 760px) {
-      :root { --columns: 2; --gap-x: 18px; }
-      .gallery-shell { padding: 24px 20px; }
+      :root {
+        --colonne: 2;
+        --spazio-colonne: 18px;
+        --spazio-righe: 28px;
+      }
+
+      .gallery-shell {
+        padding: 24px 16px;
+      }
     }
 
     @media (max-width: 480px) {
-      :root { --columns: 1; }
-      .gallery-shell { padding: 20px 16px; }
-      .card-link { min-height: 190px; }
+      :root {
+        --colonne: 1;
+      }
+
+      .gallery-shell {
+        padding: 20px 12px;
+      }
     }
   </style>
 </head>
 
 <body>
-  <main class="gallery-shell">
+  <main id="gallery-shell" class="gallery-shell">
     <div class="search-area">
-      <label class="search-label" for="gallery-search">Cerca nella galleria</label>
-      <input id="gallery-search" class="search-input" type="search"
-        placeholder="Cerca per nome, cognome, attività o università…" autocomplete="off" disabled>
-      <p id="search-status" class="search-status" aria-live="polite"></p>
+      <label class="search-label" for="gallery-search">
+        Cerca nella galleria
+      </label>
+
+      <input
+        id="gallery-search"
+        class="search-input"
+        type="search"
+        placeholder="Cerca per nome, cognome, attività o università…"
+        autocomplete="off"
+        disabled
+      >
+
+      <p
+        id="search-status"
+        class="search-status"
+        aria-live="polite"
+      ></p>
     </div>
-    <div id="message" class="message">Caricamento della galleria…</div>
-    <section id="gallery" class="gallery" aria-label="Partecipanti al LUDICa"></section>
+
+    <div id="message" class="message" role="status">
+      Caricamento della galleria…
+    </div>
+
+    <section
+      id="gallery"
+      class="gallery"
+      aria-label="Studenti LUDiCa"
+      aria-busy="true"
+    ></section>
   </main>
 
   <script>
-    /* ================================================================
-       CONFIGURAZIONE
+    /*
+      FOGLIO GOOGLE PUBBLICATO COME CSV
 
-       Il foglio Google è pubblicato come CSV e il suo URL è impostato qui.
-       Per usare in futuro un altro foglio, sostituisci soltanto CSV_URL.
-       In Google Sheets: File > Condividi > Pubblica sul web > CSV.
-       ================================================================ */
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS34F0w8wxRcuKCdA6U47ZME5g8MER3REtlrlt5arjiPB79oEepkWAFECBd2NbFfKPzEHlmMxkoLGWS/pub?gid=172330443&single=true&output=csv';
+      Colonne:
+      Nome | Cognome | attività | Università | Url immagine
 
-    // "_blank" apre i link in una nuova scheda; usa "_self" per la stessa pagina.
-    const LINK_TARGET = '_blank';
+      Colonna facoltativa:
+      LINK
+    */
+    const CSV_URL =
+      'https://docs.google.com/spreadsheets/d/e/2PACX-1vS34F0w8wxRcuKCdA6U47ZME5g8MER3REtlrlt5arjiPB79oEepkWAFECBd2NbFfKPzEHlmMxkoLGWS/pub?gid=172330443&single=true&output=csv';
 
+    const shell = document.getElementById('gallery-shell');
     const gallery = document.getElementById('gallery');
     const message = document.getElementById('message');
     const searchInput = document.getElementById('gallery-search');
     const searchStatus = document.getElementById('search-status');
+
     let allItems = [];
+    let heightFrame = 0;
+    let lastHeight = 0;
+
+    /*
+      Comunica a WordPress l'altezza reale del contenuto.
+      Richiede il listener nel codice di incorporamento.
+    */
+    function reportHeight() {
+      if (heightFrame) return;
+
+      heightFrame = requestAnimationFrame(function () {
+        heightFrame = 0;
+
+        const height = Math.ceil(
+          shell.getBoundingClientRect().height
+        ) + 2;
+
+        if (height === lastHeight) return;
+        lastHeight = height;
+
+        if (window.parent !== window) {
+          window.parent.postMessage(
+            {
+              type: 'gallery-height',
+              height: height
+            },
+            '*'
+          );
+        }
+      });
+    }
 
     function showMessage(text) {
       message.textContent = text;
       message.hidden = false;
-    }
-
-    function hideMessage() {
-      message.hidden = true;
+      reportHeight();
     }
 
     function normalizeHeader(value) {
-      return String(value || '').trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').toUpperCase();
+      return String(value || '')
+        .replace(/^\uFEFF/, '')
+        .trim()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, ' ')
+        .toUpperCase();
     }
 
-    // Parser CSV compatibile con virgole, virgolette e righe interne alle celle.
+    function searchableText(value) {
+      return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLocaleLowerCase('it');
+    }
+
     function parseCsv(text) {
       const rows = [];
       let row = [];
       let value = '';
       let quoted = false;
 
-      for (let index = 0; index < text.length; index += 1) {
+      text = text.replace(/^\uFEFF/, '');
+
+      for (let index = 0; index < text.length; index++) {
         const character = text[index];
 
         if (quoted) {
           if (character === '"' && text[index + 1] === '"') {
             value += '"';
-            index += 1;
+            index++;
           } else if (character === '"') {
             quoted = false;
           } else {
@@ -206,14 +340,22 @@
         } else if (character === ',') {
           row.push(value.trim());
           value = '';
-        } else if (character === '\n') {
+        } else if (character === '\n' || character === '\r') {
+          if (character === '\r' && text[index + 1] === '\n') {
+            index++;
+          }
+
           row.push(value.trim());
           rows.push(row);
           row = [];
           value = '';
-        } else if (character !== '\r') {
+        } else {
           value += character;
         }
+      }
+
+      if (quoted) {
+        throw new Error('Il CSV contiene virgolette non chiuse.');
       }
 
       if (value || row.length) {
@@ -221,126 +363,266 @@
         rows.push(row);
       }
 
-      return rows;
+      return rows.filter(function (cells) {
+        return cells.some(function (cell) {
+          return cell !== '';
+        });
+      });
     }
 
-    function itemsFromCsv(csvText) {
-      const rows = parseCsv(csvText);
+    function itemsFromCsv(text) {
+      const rows = parseCsv(text);
       if (!rows.length) return [];
 
       const headers = rows.shift().map(normalizeHeader);
 
-      const required = ['NOME', 'COGNOME', 'ATTIVITA', 'UNIVERSITA', 'URL IMMAGINE'];
-      const missing = required.filter(name => !headers.includes(name));
+      const required = [
+        'NOME',
+        'COGNOME',
+        'ATTIVITA',
+        'UNIVERSITA',
+        'URL IMMAGINE'
+      ];
+
+      const missing = required.filter(function (name) {
+        return !headers.includes(name);
+      });
+
       if (missing.length) {
-        throw new Error(`Colonne mancanti nel foglio: ${missing.join(', ')}.`);
+        throw new Error(
+          'Colonne mancanti nel foglio: ' + missing.join(', ') + '.'
+        );
       }
 
-      return rows
-        .map(row => Object.fromEntries(headers.map((header, index) => [header, row[index] || ''])))
-        .filter(item => item.NOME);
+      return rows.map(function (row) {
+        return Object.fromEntries(
+          headers.map(function (header, index) {
+            return [header, row[index] || ''];
+          })
+        );
+      }).filter(function (item) {
+        return item.NOME || item.COGNOME;
+      });
     }
 
     function safeHttpUrl(value) {
-      if (!value) return '';
+      const text = String(value || '').trim();
+      if (!text) return '';
+
       try {
-        const url = new URL(value, window.location.href);
-        return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
-      } catch (_) {
+        const url = new URL(text);
+
+        return ['http:', 'https:'].includes(url.protocol)
+          ? url.href
+          : '';
+      } catch (error) {
         return '';
       }
     }
 
-    function searchableText(value) {
-      return String(value || '').normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('it');
-    }
+    function createPlaceholder(item) {
+      const placeholder = document.createElement('div');
+      placeholder.className = 'photo-placeholder';
+      placeholder.setAttribute('aria-hidden', 'true');
 
-    function reportHeight() {
-      window.parent.postMessage({ type: 'gallery-height', height: document.documentElement.scrollHeight }, '*');
-    }
+      placeholder.textContent = [item.NOME, item.COGNOME]
+        .filter(Boolean)
+        .map(function (part) {
+          return Array.from(part.trim())[0] || '';
+        })
+        .join('')
+        .toLocaleUpperCase('it');
 
-    function renderItems(items, isFiltered = false) {
-      gallery.replaceChildren(...items.map(createCard));
-      searchStatus.textContent = isFiltered
-        ? `${items.length} ${items.length === 1 ? 'risultato trovato' : 'risultati trovati'}` : '';
-      if (isFiltered && !items.length) showMessage('Nessuno studente corrisponde alla ricerca.');
-      else if (items.length) hideMessage();
-      requestAnimationFrame(reportHeight);
-    }
-
-    function filterGallery() {
-      const query = searchableText(searchInput.value.trim());
-      if (!query) return renderItems(allItems);
-      renderItems(allItems.filter(item =>
-        searchableText(`${item.NOME} ${item.COGNOME} ${item.ATTIVITA} ${item.UNIVERSITA}`).includes(query)
-      ), true);
+      return placeholder;
     }
 
     function createCard(item) {
+      const fullName = [item.NOME, item.COGNOME]
+        .filter(Boolean)
+        .join(' ');
+
       const article = document.createElement('article');
       article.className = 'card';
 
       const destination = safeHttpUrl(item.LINK);
-      const link = document.createElement(destination ? 'a' : 'div');
-      link.className = 'card-link';
+      const content = document.createElement(
+        destination ? 'a' : 'div'
+      );
+
+      content.className = 'card-content';
+
       if (destination) {
-        link.href = destination;
-        link.target = LINK_TARGET;
-        if (LINK_TARGET === '_blank') link.rel = 'noopener noreferrer';
+        content.href = destination;
+        content.target = '_blank';
+        content.rel = 'noopener noreferrer';
       }
 
-      const iconBox = document.createElement('div');
-      iconBox.className = 'icon-box';
+      const photoBox = document.createElement('div');
+      photoBox.className = 'photo-box';
 
-      const iconUrl = safeHttpUrl(item['URL IMMAGINE']);
-      if (iconUrl) {
-        const img = document.createElement('img');
-        img.className = 'card-icon';
-        img.src = iconUrl;
-        img.alt = '';
-        img.loading = 'lazy';
-        img.decoding = 'async';
-        img.referrerPolicy = 'no-referrer';
-        img.addEventListener('error', () => img.remove());
-        iconBox.appendChild(img);
+      const photoUrl = safeHttpUrl(item['URL IMMAGINE']);
+
+      if (photoUrl) {
+        const image = document.createElement('img');
+        image.className = 'student-photo';
+        image.src = photoUrl;
+        image.alt = '';
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        image.referrerPolicy = 'no-referrer';
+
+        image.addEventListener('load', reportHeight);
+
+        image.addEventListener('error', function () {
+          photoBox.replaceChildren(createPlaceholder(item));
+          reportHeight();
+        });
+
+        photoBox.appendChild(image);
+      } else {
+        photoBox.appendChild(createPlaceholder(item));
       }
 
       const title = document.createElement('h2');
       title.className = 'card-title';
-      title.textContent = [item.NOME, item.COGNOME].filter(Boolean).join(' ');
+      title.textContent = fullName;
 
-      const description = document.createElement('p');
-      description.className = 'card-description';
-      description.textContent = [item.ATTIVITA, item.UNIVERSITA].filter(Boolean).join(' — ');
+      content.append(photoBox, title);
 
-      link.append(iconBox, title, description);
-      article.appendChild(link);
+      if (item.ATTIVITA) {
+        const activity = document.createElement('p');
+        activity.className = 'card-activity';
+        activity.textContent = item.ATTIVITA;
+        content.appendChild(activity);
+      }
+
+      if (item.UNIVERSITA) {
+        const university = document.createElement('p');
+        university.className = 'card-university';
+        university.textContent = item.UNIVERSITA;
+        content.appendChild(university);
+      }
+
+      article.appendChild(content);
       return article;
     }
 
+    function renderItems(items, filtered) {
+      const fragment = document.createDocumentFragment();
+
+      items.forEach(function (item) {
+        fragment.appendChild(createCard(item));
+      });
+
+      gallery.replaceChildren(fragment);
+      message.hidden = true;
+
+      searchStatus.textContent = filtered
+        ? items.length + (
+            items.length === 1
+              ? ' risultato trovato'
+              : ' risultati trovati'
+          )
+        : '';
+
+      if (!items.length) {
+        showMessage(
+          filtered
+            ? 'Nessuno studente corrisponde alla ricerca.'
+            : 'Il foglio non contiene ancora studenti da mostrare.'
+        );
+      }
+
+      reportHeight();
+    }
+
+    function filterGallery() {
+      const query = searchableText(searchInput.value.trim());
+      const terms = query.split(/\s+/).filter(Boolean);
+
+      if (!terms.length) {
+        renderItems(allItems, false);
+        return;
+      }
+
+      const filtered = allItems.filter(function (item) {
+        const text = searchableText(
+          [
+            item.NOME,
+            item.COGNOME,
+            item.ATTIVITA,
+            item.UNIVERSITA
+          ].join(' ')
+        );
+
+        return terms.every(function (term) {
+          return text.includes(term);
+        });
+      });
+
+      renderItems(filtered, true);
+    }
+
     async function loadGallery() {
+      const controller = new AbortController();
+
+      const timeout = setTimeout(function () {
+        controller.abort();
+      }, 25000);
+
       try {
-        const response = await fetch(CSV_URL, { cache: 'no-store' });
-        if (!response.ok) throw new Error(`Errore HTTP ${response.status}.`);
+        const response = await fetch(CSV_URL, {
+          cache: 'no-store',
+          signal: controller.signal
+        });
 
-        const csvText = await response.text();
-        if (/^\s*</.test(csvText)) throw new Error('Il collegamento restituisce una pagina HTML invece del CSV.');
-        const items = itemsFromCsv(csvText);
-        allItems = items;
-        renderItems(items);
+        if (!response.ok) {
+          throw new Error('Errore HTTP ' + response.status + '.');
+        }
+
+        const text = await response.text();
+
+        if (/^\s*</.test(text)) {
+          throw new Error(
+            'Il collegamento restituisce una pagina HTML invece del CSV.'
+          );
+        }
+
+        allItems = itemsFromCsv(text);
+        renderItems(allItems, false);
         searchInput.disabled = false;
-
-        if (!items.length) showMessage('Il foglio non contiene ancora elementi da mostrare.');
       } catch (error) {
         console.error(error);
-        showMessage('Impossibile caricare i dati. ' + error.message + ' Verifica che il foglio sia pubblicato sul web come CSV.');
+
+        const detail = error.name === 'AbortError'
+          ? 'Il foglio Google non ha risposto in tempo.'
+          : error.message;
+
+        showMessage(
+          'Impossibile caricare i dati. ' +
+          detail +
+          ' Verifica che il foglio sia pubblicato sul web come CSV.'
+        );
+      } finally {
+        clearTimeout(timeout);
+        gallery.setAttribute('aria-busy', 'false');
+        reportHeight();
       }
     }
 
     searchInput.addEventListener('input', filterGallery);
     window.addEventListener('load', reportHeight);
     window.addEventListener('resize', reportHeight);
+
+    if ('ResizeObserver' in window) {
+      const observer = new ResizeObserver(reportHeight);
+      observer.observe(shell);
+    }
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(reportHeight);
+    }
+
     loadGallery();
   </script>
 </body>
