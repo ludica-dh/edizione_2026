@@ -203,6 +203,36 @@
       }
     }
   </style>
+  <style>
+  :root {
+    /* CAMBIA QUESTO VALORE PER REGOLARE LE FOTO */
+    --dimensione-foto: 260px;
+  }
+
+  /* Il numero di colonne si adatta alla dimensione scelta */
+  .gallery {
+    grid-template-columns:
+      repeat(
+        auto-fit,
+        minmax(min(100%, var(--dimensione-foto)), 1fr)
+      );
+  }
+
+  .photo-box {
+    width: var(--dimensione-foto);
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto 18px;
+  }
+
+  .student-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+</style>
 </head>
 
 <body>
