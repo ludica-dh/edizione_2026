@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
 
+  <script>if (window.parent !== window) document.documentElement.classList.add("in-iframe");</script>
   <style>
     /* =====================================================================
        GUIDA ALLA PERSONALIZZAZIONE
@@ -89,18 +90,20 @@
 
     * { box-sizing: border-box; }
 
-    /* Nessuna barra di scorrimento: l'altezza e' comunicata a WordPress (reportHeight) */
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
-      overflow: hidden;
       background: var(--sfondo);
       color: var(--colore-titolo);
       font-family: var(--font-testo);
-      scrollbar-width: none;
     }
-    html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+
+    /* Barre di scorrimento nascoste SOLO quando la galleria e' dentro un iframe
+       (la pagina che la contiene fa scorrere tutto). Aperta da sola, la pagina
+       scorre normalmente. */
+    html.in-iframe, html.in-iframe body { overflow: hidden; scrollbar-width: none; }
+    html.in-iframe::-webkit-scrollbar, html.in-iframe body::-webkit-scrollbar { display: none; }
 
     .gallery-shell {
       width: 100%;
