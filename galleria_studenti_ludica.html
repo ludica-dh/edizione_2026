@@ -5,89 +5,167 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Galleria studenti LUDiCa</title>
 
+  <!-- FONT GOOGLE: per cambiare font modifica i nomi qui e in --font-testo / --font-titolo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
+    /* =====================================================================
+       GUIDA ALLA PERSONALIZZAZIONE
+       Modifica SOLO i valori qui sotto, nel blocco ":root". Il resto del
+       codice si adatta da solo. Dopo ogni modifica salva e ricarica la pagina.
+
+       FOTO
+       --dimensione-foto    larghezza di ogni foto (es. 300px, 440px, 560px).
+                            Piu' e' grande, meno colonne entrano per riga.
+       --formato-foto       forma dello spazio foto: 1 / 1 (quadrato),
+                            4 / 5 (verticale), 3 / 4 (ritratto), 4 / 3 (largo).
+       --adattamento-foto   contain = foto intera, senza tagli (puo' lasciare bordi)
+                            cover   = riempie tutto lo spazio (puo' tagliare i lati)
+       --raggio-foto        angoli arrotondati: 0px = squadrati, 50% = cerchio
+                            (con formato 1 / 1).
+       --ombra-foto         ombra sotto la foto: usa "none" per toglierla.
+
+       TESTO
+       --font-testo / --font-titolo   famiglie di caratteri (vedi sotto per i font
+                            Google). Scrivi sempre un font di riserva alla fine.
+       --dim-titolo         dimensione del nome   (es. 20px, 24px, 28px)
+       --dim-attivita       dimensione dell'attivita' (es. 15px, 17px)
+       --dim-universita     dimensione dell'universita'
+       --peso-titolo        400 normale, 600 semi-grassetto, 700/800 grassetto
+       --colore-...         colori in formato #rrggbb
+
+       LAYOUT
+       --spazio-colonne / --spazio-righe   distanza tra le schede
+       --padding-scheda     spazio interno attorno a foto e testo
+       --larghezza-massima  larghezza massima della galleria
+
+       CAMBIARE FONT (Google Fonts)
+       1. Vai su fonts.google.com e scegli un font (es. "Lora").
+       2. Sostituisci il nome nel tag <link> qui sopra, nella <head>
+          (family=Lora:wght@400;700).
+       3. Scrivi lo stesso nome in --font-titolo e/o --font-testo.
+       Se non vuoi font esterni, usa solo: Arial, Georgia, "Trebuchet MS", Verdana.
+       ===================================================================== */
+
     :root {
-      /* DIMENSIONE DELLE FOTO: modifica questo valore */
+      /* ---- FOTO ---- */
       --dimensione-foto: 440px;
+      --formato-foto: 1 / 1;
+      --adattamento-foto: contain;
+      --raggio-foto: 12px;
+      --ombra-foto: 0 8px 24px rgba(20, 30, 50, 0.14);
+      --sfondo-foto: #eef1f5;
 
-      /* ALTRE IMPOSTAZIONI */
-      --spazio-colonne: 28px;
-      --spazio-righe: 38px;
+      /* ---- FONT E DIMENSIONI DEL TESTO ---- */
+      --font-testo: "Source Sans 3", Arial, Helvetica, sans-serif;
+      --font-titolo: "Fraunces", Georgia, "Times New Roman", serif;
+      --dim-titolo: 26px;
+      --peso-titolo: 600;
+      --dim-attivita: 17px;
+      --dim-universita: 15px;
+      --dim-ricerca: 17px;
+
+      /* ---- COLORI ---- */
       --sfondo: #ffffff;
-      --testo: #161616;
-      --testo-secondario: #4b4b4b;
-      --bordo: #dddddd;
-      --accento: #2463eb;
+      --colore-titolo: #14213d;
+      --colore-attivita: #3b4558;
+      --colore-universita: #6a7487;
+      --accento: #1f5fbf;
+      --bordo: #dfe4ec;
+      --sfondo-scheda: #ffffff;
+
+      /* ---- LAYOUT ---- */
+      --larghezza-massima: 1500px;
+      --spazio-colonne: 32px;
+      --spazio-righe: 36px;
+      --padding-scheda: 20px;
+      --raggio-scheda: 16px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    /* ===== da qui in poi non serve modificare nulla ===== */
 
-    html,
-    body {
+    * { box-sizing: border-box; }
+
+    /* Nessuna barra di scorrimento: l'altezza viene comunicata alla pagina
+       WordPress tramite postMessage (vedi funzione reportHeight). */
+    html, body {
       margin: 0;
       padding: 0;
       width: 100%;
+      overflow: hidden;
       background: var(--sfondo);
-      color: var(--testo);
-      font-family: Arial, Helvetica, sans-serif;
+      color: var(--colore-titolo);
+      font-family: var(--font-testo);
+      scrollbar-width: none;
     }
+    html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 
     .gallery-shell {
       width: 100%;
-      max-width: 1440px;
+      max-width: var(--larghezza-massima);
       margin: 0 auto;
-      padding: 30px 24px;
+      padding: 32px 28px 40px;
+      overflow: hidden;
     }
 
-    .search-area {
-      max-width: 680px;
-      margin: 0 auto 36px;
-    }
+    /* Ricerca */
+    .search-area { max-width: 640px; margin: 0 auto 44px; }
 
     .search-label {
       display: block;
-      margin-bottom: 9px;
-      font-size: 16px;
-      font-weight: 700;
+      margin-bottom: 10px;
+      font-size: calc(var(--dim-ricerca) - 1px);
+      font-weight: 600;
+      color: var(--colore-attivita);
     }
 
     .search-input {
       display: block;
       width: 100%;
-      min-height: 48px;
-      padding: 12px 16px;
-      border: 1px solid #b7b7b7;
-      border-radius: 7px;
-      background: #fff;
-      color: var(--testo);
+      min-height: 54px;
+      padding: 12px 20px;
+      border: 1.5px solid var(--bordo);
+      border-radius: 999px;
+      background: #f7f9fc;
+      color: var(--colore-titolo);
       font: inherit;
-      font-size: 16px;
+      font-size: var(--dim-ricerca);
+      transition: border-color .15s, background-color .15s, box-shadow .15s;
     }
-
+    .search-input::placeholder { color: #8a93a4; }
+    .search-input:disabled { opacity: .6; }
     .search-input:focus {
-      outline: 2px solid var(--accento);
-      outline-offset: 2px;
+      outline: none;
+      border-color: var(--accento);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(31, 95, 191, 0.16);
     }
 
     .search-status {
       min-height: 20px;
-      margin: 10px 0 0;
-      color: var(--testo-secondario);
+      margin: 10px 20px 0;
+      color: var(--colore-universita);
       font-size: 14px;
     }
 
+    /* Griglia */
     .gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--dimensione-foto)), 1fr));
+      grid-template-columns: repeat(
+        auto-fit,
+        minmax(min(100%, calc(var(--dimensione-foto) + 2 * var(--padding-scheda))), 1fr)
+      );
       gap: var(--spazio-righe) var(--spazio-colonne);
     }
 
     .card {
       min-width: 0;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--bordo);
+      padding: var(--padding-scheda);
+      border: 1px solid var(--bordo);
+      border-radius: var(--raggio-scheda);
+      background: var(--sfondo-scheda);
       text-align: center;
       overflow-wrap: anywhere;
     }
@@ -101,23 +179,23 @@
       text-decoration: none;
     }
 
-    a.card-content:hover .card-title {
-      color: var(--accento);
-    }
-
     a.card-content:focus-visible {
-      outline: 2px solid var(--accento);
-      outline-offset: 5px;
-      border-radius: 4px;
+      outline: 3px solid var(--accento);
+      outline-offset: 6px;
+      border-radius: 8px;
     }
 
     .photo-box {
       display: grid;
       place-items: center;
-      width: var(--dimensione-foto);
-      max-width: 100%;
-      aspect-ratio: 1 / 1;
-      margin: 0 auto 18px;
+      width: 100%;
+      max-width: var(--dimensione-foto);
+      aspect-ratio: var(--formato-foto);
+      margin: 0 auto 20px;
+      border-radius: var(--raggio-foto);
+      background: var(--sfondo-foto);
+      box-shadow: var(--ombra-foto);
+      overflow: hidden;
     }
 
     .student-photo {
@@ -125,70 +203,70 @@
       width: 100%;
       height: 100%;
       min-height: 0;
-      object-fit: contain;
+      object-fit: var(--adattamento-foto);
+      transition: transform .35s ease;
     }
+    a.card-content:hover .student-photo { transform: scale(1.04); }
 
     .photo-placeholder {
       display: grid;
       place-items: center;
       width: 100%;
       height: 100%;
-      border-radius: 8px;
-      background: #f1f3f5;
-      color: #657080;
-      font-size: clamp(24px, 5vw, 48px);
-      font-weight: 700;
+      background: #e3e8f0;
+      color: #5a6a85;
+      font-family: var(--font-titolo);
+      font-size: clamp(32px, 8vw, 72px);
+      font-weight: 600;
     }
 
     .card-title {
-      margin: 0 0 10px;
-      font-size: 19px;
-      line-height: 1.3;
+      margin: 0 0 8px;
+      font-family: var(--font-titolo);
+      font-size: var(--dim-titolo);
+      font-weight: var(--peso-titolo);
+      line-height: 1.2;
+      color: var(--colore-titolo);
+      transition: color .15s;
     }
+    a.card-content:hover .card-title { color: var(--accento); }
 
     .card-activity,
     .card-university {
       margin: 0;
-      color: var(--testo-secondario);
-      font-size: 15px;
       line-height: 1.5;
       white-space: pre-line;
     }
-
+    .card-activity { font-size: var(--dim-attivita); color: var(--colore-attivita); }
     .card-university {
       margin-top: 6px;
+      font-size: var(--dim-universita);
+      color: var(--colore-universita);
     }
 
     .message {
       max-width: 760px;
       margin: 20px auto;
-      padding: 18px 20px;
+      padding: 18px 22px;
       border: 1px solid var(--bordo);
-      border-radius: 8px;
-      background: #fafafa;
+      border-radius: 12px;
+      background: #f7f9fc;
       line-height: 1.55;
       overflow-wrap: anywhere;
     }
 
-    [hidden] {
-      display: none !important;
-    }
+    [hidden] { display: none !important; }
 
     @media (max-width: 760px) {
-      :root {
-        --spazio-colonne: 18px;
-        --spazio-righe: 28px;
-      }
-
-      .gallery-shell {
-        padding: 24px 16px;
-      }
+      :root { --spazio-colonne: 18px; --spazio-righe: 24px; --padding-scheda: 14px; }
+      .gallery-shell { padding: 24px 16px 32px; }
     }
-
     @media (max-width: 480px) {
-      .gallery-shell {
-        padding: 20px 12px;
-      }
+      .gallery-shell { padding: 20px 12px 28px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+      a.card-content:hover .student-photo { transform: none; }
     }
   </style>
   
