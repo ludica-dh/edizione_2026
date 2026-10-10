@@ -13,83 +13,83 @@
   <style>
     /* =====================================================================
        GUIDA ALLA PERSONALIZZAZIONE
-       Modifica SOLO i valori qui sotto, nel blocco ":root". Il resto del
-       codice si adatta da solo. Dopo ogni modifica salva e ricarica la pagina.
+       Modifica SOLO i valori nel blocco ":root" qui sotto, poi salva e ricarica.
+       I testi del pulsante e la posizione dell'universita' si cambiano nel
+       blocco "IMPOSTAZIONI" all'inizio del <script>.
 
-       FOTO
-       --dimensione-foto    larghezza di ogni foto (es. 300px, 440px, 560px).
-                            Piu' e' grande, meno colonne entrano per riga.
-       --formato-foto       forma dello spazio foto: 1 / 1 (quadrato),
-                            4 / 5 (verticale), 3 / 4 (ritratto), 4 / 3 (largo).
-       --adattamento-foto   contain = foto intera, senza tagli (puo' lasciare bordi)
-                            cover   = riempie tutto lo spazio (puo' tagliare i lati)
-       --raggio-foto        angoli arrotondati: 0px = squadrati, 50% = cerchio
-                            (con formato 1 / 1).
-       --ombra-foto         ombra sotto la foto: usa "none" per toglierla.
+       FOTO (occupa tutta la larghezza della scheda, a filo dei bordi)
+       --dimensione-foto    larghezza esatta della scheda/foto (es. 320px, 420px, 600px).
+                            Se l'area e' piu' stretta, la scheda occupa tutta la larghezza.
+       --formato-foto       1 / 1 quadrato, 4 / 5 verticale, 3 / 4 ritratto, 4 / 3 largo
+       --adattamento-foto   cover = riempie lo spazio (taglia i bordi)
+                            contain = foto intera (puo' lasciare bande vuote)
+       --posizione-foto     parte da mostrare quando taglia: center top = privilegia i volti,
+                            center center = centro
 
        TESTO
-       --font-testo / --font-titolo   famiglie di caratteri (vedi sotto per i font
-                            Google). Scrivi sempre un font di riserva alla fine.
-       --dim-titolo         dimensione del nome   (es. 20px, 24px, 28px)
-       --dim-attivita       dimensione dell'attivita' (es. 15px, 17px)
-       --dim-universita     dimensione dell'universita'
-       --peso-titolo        400 normale, 600 semi-grassetto, 700/800 grassetto
-       --colore-...         colori in formato #rrggbb
+       --font-testo / --font-titolo   famiglie di caratteri (Google Fonts: vedi sotto)
+       --dim-titolo / --peso-titolo   nome dello studente
+       --dim-attivita                 descrizione/attivita'
+       --dim-badge                    etichetta sulla foto (universita')
+       --dim-pulsante                 testo del pulsante
+       --colore-...                   colori in formato #rrggbb
 
-       LAYOUT
+       SCHEDA
+       --raggio-scheda      arrotondamento degli angoli (0px = squadrata)
+       --padding-scheda     spazio interno attorno al testo
+       --ombra-hover        ombra quando passi il mouse sopra
        --spazio-colonne / --spazio-righe   distanza tra le schede
-       --padding-scheda     spazio interno attorno a foto e testo
-       --larghezza-massima  larghezza massima della galleria
 
        CAMBIARE FONT (Google Fonts)
-       1. Vai su fonts.google.com e scegli un font (es. "Lora").
-       2. Sostituisci il nome nel tag <link> qui sopra, nella <head>
-          (family=Lora:wght@400;700).
+       1. Scegli un font su fonts.google.com (es. "Lora").
+       2. Sostituisci il nome nel tag <link> nella <head> (family=Lora:wght@400;700).
        3. Scrivi lo stesso nome in --font-titolo e/o --font-testo.
-       Se non vuoi font esterni, usa solo: Arial, Georgia, "Trebuchet MS", Verdana.
+       Senza font esterni usa solo: Arial, Georgia, "Trebuchet MS", Verdana.
        ===================================================================== */
 
     :root {
       /* ---- FOTO ---- */
-      --dimensione-foto: 660px;
+      --dimensione-foto: 420px;
       --formato-foto: 1 / 1;
-      --adattamento-foto: contain;
-      --raggio-foto: 12px;
-      --ombra-foto: 0 8px 24px rgba(20, 30, 50, 0.14);
+      --adattamento-foto: cover;
+      --posizione-foto: center top;
       --sfondo-foto: #eef1f5;
 
-      /* ---- FONT E DIMENSIONI DEL TESTO ---- */
+      /* ---- FONT E DIMENSIONI ---- */
       --font-testo: "Source Sans 3", Arial, Helvetica, sans-serif;
       --font-titolo: "Fraunces", Georgia, "Times New Roman", serif;
       --dim-titolo: 26px;
-      --peso-titolo: 600;
+      --peso-titolo: 700;
       --dim-attivita: 17px;
-      --dim-universita: 15px;
+      --dim-badge: 15px;
+      --dim-pulsante: 16px;
       --dim-ricerca: 17px;
 
       /* ---- COLORI ---- */
       --sfondo: #ffffff;
       --colore-titolo: #14213d;
-      --colore-attivita: #3b4558;
-      --colore-universita: #6a7487;
+      --colore-attivita: #4a5365;
+      --colore-pulsante: #14213d;
+      --colore-testo-pulsante: #ffffff;
+      --colore-badge: rgba(20, 24, 34, 0.74);
       --accento: #1f5fbf;
-      --bordo: #dfe4ec;
+      --bordo: #e1e5ec;
       --sfondo-scheda: #ffffff;
 
-      /* ---- LAYOUT ---- */
-      --larghezza-massima: 1500px;
-      --spazio-colonne: 32px;
-      --spazio-righe: 36px;
-      --padding-scheda: 20px;
+      /* ---- SCHEDA E LAYOUT ---- */
+      --larghezza-massima: 1600px;
+      --spazio-colonne: 28px;
+      --spazio-righe: 32px;
+      --padding-scheda: 24px;
       --raggio-scheda: 16px;
+      --ombra-hover: 0 18px 40px rgba(20, 30, 50, 0.16);
     }
 
     /* ===== da qui in poi non serve modificare nulla ===== */
 
     * { box-sizing: border-box; }
 
-    /* Nessuna barra di scorrimento: l'altezza viene comunicata alla pagina
-       WordPress tramite postMessage (vedi funzione reportHeight). */
+    /* Nessuna barra di scorrimento: l'altezza e' comunicata a WordPress (reportHeight) */
     html, body {
       margin: 0;
       padding: 0;
@@ -106,7 +106,8 @@
       width: 100%;
       max-width: var(--larghezza-massima);
       margin: 0 auto;
-      padding: 32px 28px 40px;
+      /* spazio in alto e ai lati per l'ombra e l'effetto di sollevamento */
+      padding: 32px 28px 56px;
       overflow: hidden;
     }
 
@@ -146,55 +147,46 @@
     .search-status {
       min-height: 20px;
       margin: 10px 20px 0;
-      color: var(--colore-universita);
+      color: #6a7487;
       font-size: 14px;
     }
 
-    /* Griglia */
+    /* Griglia: colonne di larghezza esatta = --dimensione-foto */
     .gallery {
       display: grid;
       grid-template-columns: repeat(
-        auto-fit,
-        minmax(min(100%, calc(var(--dimensione-foto) + 2 * var(--padding-scheda))), 1fr)
+        auto-fill,
+        minmax(min(100%, var(--dimensione-foto)), var(--dimensione-foto))
       );
+      justify-content: center;
       gap: var(--spazio-righe) var(--spazio-colonne);
     }
 
+    /* Scheda */
     .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
       min-width: 0;
-      padding: var(--padding-scheda);
       border: 1px solid var(--bordo);
       border-radius: var(--raggio-scheda);
       background: var(--sfondo-scheda);
-      text-align: center;
+      overflow: hidden;
+      text-align: left;
       overflow-wrap: anywhere;
+      transition: transform .25s ease, box-shadow .25s ease;
     }
-
-    .card-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 100%;
-      color: inherit;
-      text-decoration: none;
-    }
-
-    a.card-content:focus-visible {
-      outline: 3px solid var(--accento);
-      outline-offset: 6px;
-      border-radius: 8px;
+    .card:hover,
+    .card:focus-within {
+      transform: translateY(-5px);
+      box-shadow: var(--ombra-hover);
     }
 
     .photo-box {
-      display: grid;
-      place-items: center;
+      position: relative;
       width: 100%;
-      max-width: var(--dimensione-foto);
       aspect-ratio: var(--formato-foto);
-      margin: 0 auto 20px;
-      border-radius: var(--raggio-foto);
       background: var(--sfondo-foto);
-      box-shadow: var(--ombra-foto);
       overflow: hidden;
     }
 
@@ -204,9 +196,8 @@
       height: 100%;
       min-height: 0;
       object-fit: var(--adattamento-foto);
-      transition: transform .35s ease;
+      object-position: var(--posizione-foto);
     }
-    a.card-content:hover .student-photo { transform: scale(1.04); }
 
     .photo-placeholder {
       display: grid;
@@ -220,29 +211,61 @@
       font-weight: 600;
     }
 
+    .badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      max-width: calc(100% - 28px);
+      padding: 6px 13px;
+      border-radius: 9px;
+      background: var(--colore-badge);
+      color: #fff;
+      font-size: var(--dim-badge);
+      font-weight: 600;
+      line-height: 1.3;
+      backdrop-filter: blur(3px);
+    }
+
+    .card-body {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      padding: var(--padding-scheda);
+    }
+
     .card-title {
-      margin: 0 0 8px;
+      margin: 0 0 10px;
       font-family: var(--font-titolo);
       font-size: var(--dim-titolo);
       font-weight: var(--peso-titolo);
       line-height: 1.2;
       color: var(--colore-titolo);
-      transition: color .15s;
     }
-    a.card-content:hover .card-title { color: var(--accento); }
 
-    .card-activity,
-    .card-university {
-      margin: 0;
-      line-height: 1.5;
+    .card-activity {
+      margin: 0 0 22px;
+      font-size: var(--dim-attivita);
+      line-height: 1.55;
+      color: var(--colore-attivita);
       white-space: pre-line;
     }
-    .card-activity { font-size: var(--dim-attivita); color: var(--colore-attivita); }
-    .card-university {
-      margin-top: 6px;
-      font-size: var(--dim-universita);
-      color: var(--colore-universita);
+
+    /* Pulsante: il suo ::after copre tutta la scheda, che diventa cliccabile */
+    .card-button {
+      align-self: flex-start;
+      margin-top: auto;
+      padding: 12px 22px;
+      border-radius: 9px;
+      background: var(--colore-pulsante);
+      color: var(--colore-testo-pulsante);
+      font-size: var(--dim-pulsante);
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color .15s;
     }
+    .card-button::after { content: ""; position: absolute; inset: 0; }
+    .card:hover .card-button { background: var(--accento); }
+    .card-button:focus-visible { outline: 3px solid var(--accento); outline-offset: 3px; }
 
     .message {
       max-width: 760px;
@@ -258,15 +281,15 @@
     [hidden] { display: none !important; }
 
     @media (max-width: 760px) {
-      :root { --spazio-colonne: 18px; --spazio-righe: 24px; --padding-scheda: 14px; }
-      .gallery-shell { padding: 24px 16px 32px; }
+      :root { --spazio-colonne: 16px; --spazio-righe: 22px; --padding-scheda: 18px; }
+      .gallery-shell { padding: 24px 16px 44px; }
     }
     @media (max-width: 480px) {
-      .gallery-shell { padding: 20px 12px 28px; }
+      .gallery-shell { padding: 20px 12px 36px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      * { transition: none !important; }
-      a.card-content:hover .student-photo { transform: none; }
+      .card, .card-button { transition: none; }
+      .card:hover, .card:focus-within { transform: none; }
     }
   </style>
   
@@ -287,6 +310,8 @@
         autocomplete="off"
         disabled
       >
+
+      <p id="diagnostica" class="search-status" style="color:#b42318;font-weight:600;" hidden></p>
 
       <p
         id="search-status"
@@ -326,6 +351,35 @@
     const searchInput = document.getElementById('gallery-search');
     const searchStatus = document.getElementById('search-status');
 
+    /* ===================== IMPOSTAZIONI ===================== */
+    /* Dove mostrare l'universita':
+         'badge'    = etichetta scura sopra la foto (come nell'esempio)
+         'testo'    = riga di testo sotto l'attivita
+         'nascosta' = non mostrarla (resta comunque cercabile) */
+    const POSIZIONE_UNIVERSITA = 'badge';
+
+    /* Testo del pulsante (appare solo se la colonna LINK e' compilata) */
+    const TESTO_PULSANTE = 'Scopri di più →';
+    /* ======================================================== */
+
+    /* DIAGNOSTICA: metti false quando hai finito di regolare la dimensione */
+    const MOSTRA_DIAGNOSTICA = true;
+    const diag = document.getElementById('diagnostica');
+
+    function updateDiagnostic() {
+      if (!MOSTRA_DIAGNOSTICA) return;
+      const box = document.querySelector('.photo-box');
+      const wanted = parseFloat(
+        getComputedStyle(document.documentElement)
+          .getPropertyValue('--dimensione-foto')
+      );
+      diag.hidden = false;
+      diag.textContent =
+        'Larghezza area disponibile: ' + Math.round(window.innerWidth) + 'px' +
+        ' | foto richiesta: ' + wanted + 'px' +
+        ' | foto reale: ' + (box ? Math.round(box.getBoundingClientRect().width) : '-') + 'px';
+    }
+
     let allItems = [];
     let heightFrame = 0;
     let lastHeight = 0;
@@ -339,6 +393,7 @@
 
       heightFrame = requestAnimationFrame(function () {
         heightFrame = 0;
+        updateDiagnostic();
 
         const height = Math.ceil(
           shell.getBoundingClientRect().height
@@ -511,21 +566,18 @@
       const article = document.createElement('article');
       article.className = 'card';
 
-      const destination = safeHttpUrl(item.LINK);
-      const content = document.createElement(
-        destination ? 'a' : 'div'
-      );
-
-      content.className = 'card-content';
-
-      if (destination) {
-        content.href = destination;
-        content.target = '_blank';
-        content.rel = 'noopener noreferrer';
-      }
-
       const photoBox = document.createElement('div');
       photoBox.className = 'photo-box';
+
+      /* Etichetta sulla foto */
+      const extras = [];
+
+      if (POSIZIONE_UNIVERSITA === 'badge' && item.UNIVERSITA) {
+        const badge = document.createElement('span');
+        badge.className = 'badge';
+        badge.textContent = item.UNIVERSITA;
+        extras.push(badge);
+      }
 
       const photoUrl = safeHttpUrl(item['URL IMMAGINE']);
 
@@ -541,36 +593,50 @@
         image.addEventListener('load', reportHeight);
 
         image.addEventListener('error', function () {
-          photoBox.replaceChildren(createPlaceholder(item));
+          photoBox.replaceChildren(createPlaceholder(item), ...extras);
           reportHeight();
         });
 
-        photoBox.appendChild(image);
+        photoBox.append(image, ...extras);
       } else {
-        photoBox.appendChild(createPlaceholder(item));
+        photoBox.append(createPlaceholder(item), ...extras);
       }
+
+      const body = document.createElement('div');
+      body.className = 'card-body';
 
       const title = document.createElement('h2');
       title.className = 'card-title';
       title.textContent = fullName;
+      body.appendChild(title);
 
-      content.append(photoBox, title);
+      /* Descrizione: attivita' (+ universita' se richiesto sotto forma di testo) */
+      const description = [
+        item.ATTIVITA,
+        POSIZIONE_UNIVERSITA === 'testo' ? item.UNIVERSITA : ''
+      ].filter(Boolean).join('\n');
 
-      if (item.ATTIVITA) {
+      if (description) {
         const activity = document.createElement('p');
         activity.className = 'card-activity';
-        activity.textContent = item.ATTIVITA;
-        content.appendChild(activity);
+        activity.textContent = description;
+        body.appendChild(activity);
       }
 
-      if (item.UNIVERSITA) {
-        const university = document.createElement('p');
-        university.className = 'card-university';
-        university.textContent = item.UNIVERSITA;
-        content.appendChild(university);
+      const destination = safeHttpUrl(item.LINK);
+
+      if (destination) {
+        const button = document.createElement('a');
+        button.className = 'card-button';
+        button.href = destination;
+        button.target = '_blank';
+        button.rel = 'noopener noreferrer';
+        button.textContent = TESTO_PULSANTE;
+        button.setAttribute('aria-label', TESTO_PULSANTE + ' ' + fullName);
+        body.appendChild(button);
       }
 
-      article.appendChild(content);
+      article.append(photoBox, body);
       return article;
     }
 
