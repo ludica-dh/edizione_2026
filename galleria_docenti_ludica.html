@@ -253,6 +253,9 @@
       white-space: pre-line;
     }
 
+    .field-label { margin: 0 0 6px; font: inherit; font-size: 14px; font-weight: 600; color: var(--colore-attivita); }
+    .card-field { min-width: 0; }
+
     .card-seminar { font-weight: 600; color: var(--colore-titolo); }
 
     /* Pulsante: il suo ::after copre tutta la scheda, che diventa cliccabile */
@@ -342,7 +345,7 @@
       FOGLIO GOOGLE PUBBLICATO COME CSV
 
       Colonne:
-      Nome | Cognome | Afferenza | titolo seminario | contenuto | bio | url immagine | pubblica
+      Nome | Cognome | afferenza | titolo seminario | contenuto | bio | url immagine | pubblica
 
       Solo le righe con pubblica spuntata (TRUE o VERO) vengono mostrate.
 
@@ -587,7 +590,7 @@
       if (POSIZIONE_AFFERENZA === 'badge' && item.AFFERENZA) {
         const badge = document.createElement('span');
         badge.className = 'badge';
-        badge.textContent = item.AFFERENZA;
+        badge.textContent = 'Afferenza: ' + item.AFFERENZA;
         extras.push(badge);
       }
 
@@ -622,31 +625,27 @@
       title.textContent = fullName;
       body.appendChild(title);
 
-      /* Titolo seminario e biografia del docente */
-      if (item['TITOLO SEMINARIO']) {
-        const seminar = document.createElement('p');
-        seminar.className = 'card-activity card-seminar';
-        seminar.textContent = item['TITOLO SEMINARIO'];
-        body.appendChild(seminar);
-      }
-      if (item.CONTENUTO) {
-        const content = document.createElement('p');
-        content.className = 'card-activity';
-        content.textContent = item.CONTENUTO;
-        body.appendChild(content);
+      /* Campi distinti del CSV: nessun testo viene troncato. */
+      function appendField(label, value, emphasis = false) {
+        if (!String(value || '').trim()) return;
+        const field = document.createElement('div');
+        field.className = 'card-field';
+        const heading = document.createElement('h3');
+        heading.className = 'field-label';
+        heading.textContent = label;
+        const text = document.createElement('p');
+        text.className = emphasis ? 'card-activity card-seminar' : 'card-activity';
+        text.textContent = value;
+        field.append(heading, text);
+        body.appendChild(field);
       }
 
-      const description = [
-        item.BIO,
-        POSIZIONE_AFFERENZA === 'testo' ? item.AFFERENZA : ''
-      ].filter(Boolean).join('\n');
-
-      if (description) {
-        const activity = document.createElement('p');
-        activity.className = 'card-activity';
-        activity.textContent = description;
-        body.appendChild(activity);
+      if (POSIZIONE_AFFERENZA === 'testo') {
+        appendField('Afferenza', item.AFFERENZA);
       }
+      appendField('Titolo seminario', item['TITOLO SEMINARIO'], true);
+      appendField('Contenuto', item.CONTENUTO);
+      appendField('Bio', item.BIO);
 
       const destination = safeHttpUrl(item.LINK);
 
