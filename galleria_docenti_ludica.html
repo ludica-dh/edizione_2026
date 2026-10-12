@@ -30,7 +30,7 @@
        TESTO
        --font-testo / --font-titolo   famiglie di caratteri (Google Fonts: vedi sotto)
        --dim-titolo / --peso-titolo   nome del docente
-       --dim-attivita                 descrizione/attivita'
+       --dim-attivita                 biografia e titolo seminario
        --dim-badge                    etichetta sulla foto (universita')
        --dim-pulsante                 testo del pulsante
        --colore-...                   colori in formato #rrggbb
@@ -253,6 +253,8 @@
       white-space: pre-line;
     }
 
+    .card-seminar { font-weight: 600; color: var(--colore-titolo); }
+
     /* Pulsante: il suo ::after copre tutta la scheda, che diventa cliccabile */
     .card-button {
       align-self: flex-start;
@@ -309,7 +311,7 @@
         id="gallery-search"
         class="search-input"
         type="search"
-        placeholder="Cerca per nome, cognome, attività o università…"
+        placeholder="Cerca per nome, bio, seminario o università…"
         autocomplete="off"
         disabled
       >
@@ -340,7 +342,7 @@
       FOGLIO GOOGLE PUBBLICATO COME CSV
 
       Colonne:
-      Nome | Cognome | attività | Università | url immagine | pubblica
+      Nome | Cognome | bio | titolo seminario | Università | url immagine | pubblica
 
       Solo le righe con pubblica spuntata (TRUE o VERO) vengono mostrate.
 
@@ -359,7 +361,7 @@
     /* ===================== IMPOSTAZIONI ===================== */
     /* Dove mostrare l'universita':
          'badge'    = etichetta scura sopra la foto (come nell'esempio)
-         'testo'    = riga di testo sotto l'attivita
+         'testo'    = riga di testo sotto la bio
          'nascosta' = non mostrarla (resta comunque cercabile) */
     const POSIZIONE_UNIVERSITA = 'badge';
 
@@ -368,7 +370,7 @@
     /* ======================================================== */
 
     /* DIAGNOSTICA: metti false quando hai finito di regolare la dimensione */
-    const MOSTRA_DIAGNOSTICA = false;
+    const MOSTRA_DIAGNOSTICA = true;
     const diag = document.getElementById('diagnostica');
 
     function updateDiagnostic() {
@@ -506,7 +508,8 @@
       const required = [
         'NOME',
         'COGNOME',
-        'ATTIVITA',
+        'BIO',
+        'TITOLO SEMINARIO',
         'UNIVERSITA',
         'URL IMMAGINE',
         'PUBBLICA'
@@ -618,9 +621,15 @@
       title.textContent = fullName;
       body.appendChild(title);
 
-      /* Descrizione: attivita' (+ universita' se richiesto sotto forma di testo) */
+      /* Titolo seminario e biografia del docente */
+      if (item['TITOLO SEMINARIO']) {
+        const seminar = document.createElement('p');
+        seminar.className = 'card-activity card-seminar';
+        seminar.textContent = item['TITOLO SEMINARIO'];
+        body.appendChild(seminar);
+      }
       const description = [
-        item.ATTIVITA,
+        item.BIO,
         POSIZIONE_UNIVERSITA === 'testo' ? item.UNIVERSITA : ''
       ].filter(Boolean).join('\n');
 
@@ -691,7 +700,8 @@
           [
             item.NOME,
             item.COGNOME,
-            item.ATTIVITA,
+            item.BIO,
+            item['TITOLO SEMINARIO'],
             item.UNIVERSITA
           ].join(' ')
         );
