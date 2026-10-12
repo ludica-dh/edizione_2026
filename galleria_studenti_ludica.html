@@ -340,7 +340,10 @@
       FOGLIO GOOGLE PUBBLICATO COME CSV
 
       Colonne:
-      Nome | Cognome | attività | Università | Url immagine
+      Nome | Cognome | attività | Università | Url immagine | pubblica
+
+      Spunta la casella pubblica per mostrare la riga.
+      Caselle vuote o non spuntate escludono la riga anche dalla ricerca.
 
       Colonna facoltativa:
       LINK
@@ -366,7 +369,7 @@
     /* ======================================================== */
 
     /* DIAGNOSTICA: metti false quando hai finito di regolare la dimensione */
-    const MOSTRA_DIAGNOSTICA = false;
+    const MOSTRA_DIAGNOSTICA = true;
     const diag = document.getElementById('diagnostica');
 
     function updateDiagnostic() {
@@ -506,7 +509,8 @@
         'COGNOME',
         'ATTIVITA',
         'UNIVERSITA',
-        'URL IMMAGINE'
+        'URL IMMAGINE',
+        'PUBBLICA'
       ];
 
       const missing = required.filter(function (name) {
@@ -526,7 +530,9 @@
           })
         );
       }).filter(function (item) {
-        return item.NOME || item.COGNOME;
+        const pubblica = normalizeHeader(item.PUBBLICA);
+        return (item.NOME || item.COGNOME) &&
+          (pubblica === 'TRUE' || pubblica === 'VERO');
       });
     }
 
@@ -665,7 +671,7 @@
         showMessage(
           filtered
             ? 'Nessuno studente corrisponde alla ricerca.'
-            : 'Il foglio non contiene ancora studenti da mostrare.'
+            : 'Nessuno studente è attualmente pubblicato.'
         );
       }
 
