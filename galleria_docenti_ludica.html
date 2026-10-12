@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Galleria docenti LUDiCa</title>
+
+  <!-- FONT GOOGLE: per cambiare font modifica i nomi qui e in --font-testo / --font-titolo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+
+  <script>if (window.parent !== window) document.documentElement.classList.add("in-iframe");</script>
+  <style>
+    /* =====================================================================
+       GUIDA ALLA PERSONALIZZAZIONE
+       Modifica SOLO i valori nel blocco ":root" qui sotto, poi salva e ricarica.
+       I testi del pulsante e la posizione dell'universita' si cambiano nel
+       blocco "IMPOSTAZIONI" all'inizio del <script>.
+
+       FOTO (occupa tutta la larghezza della scheda, a filo dei bordi)
+       --dimensione-foto    larghezza esatta della scheda/foto (es. 320px, 420px, 600px).
+                            Se l'area e' piu' stretta, la scheda occupa tutta la larghezza.
+       --formato-foto       1 / 1 quadrato, 4 / 5 verticale, 3 / 4 ritratto, 4 / 3 largo
+       --adattamento-foto   cover = riempie lo spazio (taglia i bordi)
+                            contain = foto intera (puo' lasciare bande vuote)
+       --posizione-foto     parte da mostrare quando taglia: center top = privilegia i volti,
+                            center center = centro
+
+       TESTO
+       --font-testo / --font-titolo   famiglie di caratteri (Google Fonts: vedi sotto)
+       --dim-titolo / --peso-titolo   nome del docente
+       --dim-attivita                 descrizione/attivita'
+       --dim-badge                    etichetta sulla foto (universita')
+       --dim-pulsante                 testo del pulsante
+       --colore-...                   colori in formato #rrggbb
+
+       SCHEDA
+       --raggio-scheda      arrotondamento degli angoli (0px = squadrata)
+       --padding-scheda     spazio interno attorno al testo
+       --ombra-hover        ombra quando passi il mouse sopra
+       --spazio-colonne / --spazio-righe   distanza tra le schede
+
+       CAMBIARE FONT (Google Fonts)
+       1. Scegli un font su fonts.google.com (es. "Lora").
+       2. Sostituisci il nome nel tag <link> nella <head> (family=Lora:wght@400;700).
+       3. Scrivi lo stesso nome in --font-titolo e/o --font-testo.
+       Senza font esterni usa solo: Arial, Georgia, "Trebuchet MS", Verdana.
+       ===================================================================== */
+
+    :root {
+      /* ---- FOTO ---- */
+      --dimensione-foto: 420px;
+      --formato-foto: 1 / 1;
+      --adattamento-foto: cover;
+      --posizione-foto: center top;
+      --sfondo-foto: #eef1f5;
+
+      /* ---- FONT E DIMENSIONI ---- */
+      --font-testo: "Source Sans 3", Arial, Helvetica, sans-serif;
+      --font-titolo: "Fraunces", Georgia, "Times New Roman", serif;
+      --dim-titolo: 26px;
+      --peso-titolo: 700;
+      --dim-attivita: 17px;
+      --dim-badge: 15px;
+      --dim-pulsante: 16px;
+      --dim-ricerca: 17px;
+
+      /* ---- COLORI ---- */
+      --sfondo: #ffffff;
+      --colore-titolo: #14213d;
+      --colore-attivita: #4a5365;
+      --colore-pulsante: #14213d;
+      --colore-testo-pulsante: #ffffff;
+      --colore-badge: rgba(20, 24, 34, 0.74);
+      --accento: #1f5fbf;
+      --bordo: #e1e5ec;
+      --sfondo-scheda: #ffffff;
+
+      /* ---- SCHEDA E LAYOUT ---- */
+      --larghezza-massima: 1600px;
+      --spazio-colonne: 28px;
+      --spazio-righe: 32px;
+      --padding-scheda: 24px;
+      --raggio-scheda: 16px;
+      --ombra-hover: 0 18px 40px rgba(20, 30, 50, 0.16);
+    }
+
+    /* ===== da qui in poi non serve modificare nulla ===== */
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      background: var(--sfondo);
+      color: var(--colore-titolo);
+      font-family: var(--font-testo);
+    }
+
+    /* Barre di scorrimento nascoste SOLO quando la galleria e' dentro un iframe
+       (la pagina che la contiene fa scorrere tutto). Aperta da sola, la pagina
+       scorre normalmente. */
+    html.in-iframe, html.in-iframe body { overflow: hidden; scrollbar-width: none; }
+    html.in-iframe::-webkit-scrollbar, html.in-iframe body::-webkit-scrollbar { display: none; }
+
+    .gallery-shell {
+      width: 100%;
+      max-width: var(--larghezza-massima);
+      margin: 0 auto;
+      /* spazio in alto e ai lati per l'ombra e l'effetto di sollevamento */
+      padding: 32px 28px 56px;
+      overflow: hidden;
+    }
+
+    /* Ricerca */
+    .search-area { max-width: 640px; margin: 0 auto 44px; }
+
+    .search-label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: calc(var(--dim-ricerca) - 1px);
+      font-weight: 600;
+      color: var(--colore-attivita);
+    }
+
+    .search-input {
+      display: block;
+      width: 100%;
+      min-height: 54px;
+      padding: 12px 20px;
+      border: 1.5px solid var(--bordo);
+      border-radius: 999px;
+      background: #f7f9fc;
+      color: var(--colore-titolo);
+      font: inherit;
+      font-size: var(--dim-ricerca);
+      transition: border-color .15s, background-color .15s, box-shadow .15s;
+    }
+    .search-input::placeholder { color: #8a93a4; }
+    .search-input:disabled { opacity: .6; }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accento);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(31, 95, 191, 0.16);
+    }
+
+    .search-status {
+      min-height: 20px;
+      margin: 10px 20px 0;
+      color: #6a7487;
+      font-size: 14px;
+    }
+
+    /* Griglia: colonne di larghezza esatta = --dimensione-foto */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(
+        auto-fill,
+        minmax(min(100%, var(--dimensione-foto)), var(--dimensione-foto))
+      );
+      justify-content: center;
+      gap: var(--spazio-righe) var(--spazio-colonne);
+    }
+
+    /* Scheda */
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      border: 1px solid var(--bordo);
+      border-radius: var(--raggio-scheda);
+      background: var(--sfondo-scheda);
+      overflow: hidden;
+      text-align: left;
+      overflow-wrap: anywhere;
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .card:hover,
+    .card:focus-within {
+      transform: translateY(-5px);
+      box-shadow: var(--ombra-hover);
+    }
+
+    .photo-box {
+      position: relative;
+      width: 100%;
+      aspect-ratio: var(--formato-foto);
+      background: var(--sfondo-foto);
+      overflow: hidden;
+    }
+
+    .student-photo {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      object-fit: var(--adattamento-foto);
+      object-position: var(--posizione-foto);
+    }
+
+    .photo-placeholder {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      background: #e3e8f0;
+      color: #5a6a85;
+      font-family: var(--font-titolo);
+      font-size: clamp(32px, 8vw, 72px);
+      font-weight: 600;
+    }
+
+    .badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      max-width: calc(100% - 28px);
+      padding: 6px 13px;
+      border-radius: 9px;
+      background: var(--colore-badge);
+      color: #fff;
+      font-size: var(--dim-badge);
+      font-weight: 600;
+      line-height: 1.3;
+      backdrop-filter: blur(3px);
+    }
+
+    .card-body {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      padding: var(--padding-scheda);
+    }
+
+    .card-title {
+      margin: 0 0 10px;
+      font-family: var(--font-titolo);
+      font-size: var(--dim-titolo);
+      font-weight: var(--peso-titolo);
+      line-height: 1.2;
+      color: var(--colore-titolo);
+    }
+
+    .card-activity {
+      margin: 0 0 22px;
+      font-size: var(--dim-attivita);
+      line-height: 1.55;
+      color: var(--colore-attivita);
+      white-space: pre-line;
+    }
+
+    /* Pulsante: il suo ::after copre tutta la scheda, che diventa cliccabile */
+    .card-button {
+      align-self: flex-start;
+      margin-top: auto;
+      padding: 12px 22px;
+      border-radius: 9px;
+      background: var(--colore-pulsante);
+      color: var(--colore-testo-pulsante);
+      font-size: var(--dim-pulsante);
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color .15s;
+    }
+    .card-button::after { content: ""; position: absolute; inset: 0; }
+    .card:hover .card-button { background: var(--accento); }
+    .card-button:focus-visible { outline: 3px solid var(--accento); outline-offset: 3px; }
+
+    .message {
+      max-width: 760px;
+      margin: 20px auto;
+      padding: 18px 22px;
+      border: 1px solid var(--bordo);
+      border-radius: 12px;
+      background: #f7f9fc;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+    }
+
+    [hidden] { display: none !important; }
+
+    @media (max-width: 760px) {
+      :root { --spazio-colonne: 16px; --spazio-righe: 22px; --padding-scheda: 18px; }
+      .gallery-shell { padding: 24px 16px 44px; }
+    }
+    @media (max-width: 480px) {
+      .gallery-shell { padding: 20px 12px 36px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .card, .card-button { transition: none; }
+      .card:hover, .card:focus-within { transform: none; }
+    }
+  </style>
+  
+</head>
+
+<body>
+  <main id="gallery-shell" class="gallery-shell">
+    <div class="search-area">
+      <label class="search-label" for="gallery-search">
+        Cerca nella galleria
+      </label>
+
+      <input
+        id="gallery-search"
+        class="search-input"
+        type="search"
+        placeholder="Cerca per nome, cognome, attività o università…"
+        autocomplete="off"
+        disabled
+      >
+
+      <p id="diagnostica" class="search-status" style="color:#b42318;font-weight:600;" hidden></p>
+
+      <p
+        id="search-status"
+        class="search-status"
+        aria-live="polite"
+      ></p>
+    </div>
+
+    <div id="message" class="message" role="status">
+      Caricamento della galleria…
+    </div>
+
+    <section
+      id="gallery"
+      class="gallery"
+      aria-label="Docenti LUDiCa"
+      aria-busy="true"
+    ></section>
+  </main>
+
+  <script>
+    /*
+      FOGLIO GOOGLE PUBBLICATO COME CSV
+
+      Colonne:
+      Nome | Cognome | attività | Università | url immagine | pubblica
+
+      Solo le righe con pubblica spuntata (TRUE o VERO) vengono mostrate.
+
+      Colonna facoltativa:
+      LINK
+    */
+    const CSV_URL =
+      'https://docs.google.com/spreadsheets/d/e/2PACX-1vS34F0w8wxRcuKCdA6U47ZME5g8MER3REtlrlt5arjiPB79oEepkWAFECBd2NbFfKPzEHlmMxkoLGWS/pub?gid=1374600471&single=true&output=csv';
+
+    const shell = document.getElementById('gallery-shell');
+    const gallery = document.getElementById('gallery');
+    const message = document.getElementById('message');
+    const searchInput = document.getElementById('gallery-search');
+    const searchStatus = document.getElementById('search-status');
+
+    /* ===================== IMPOSTAZIONI ===================== */
+    /* Dove mostrare l'universita':
+         'badge'    = etichetta scura sopra la foto (come nell'esempio)
+         'testo'    = riga di testo sotto l'attivita
+         'nascosta' = non mostrarla (resta comunque cercabile) */
+    const POSIZIONE_UNIVERSITA = 'badge';
+
+    /* Testo del pulsante (appare solo se la colonna LINK e' compilata) */
+    const TESTO_PULSANTE = 'Scopri di più →';
+    /* ======================================================== */
+
+    /* DIAGNOSTICA: metti false quando hai finito di regolare la dimensione */
+    const MOSTRA_DIAGNOSTICA = true;
+    const diag = document.getElementById('diagnostica');
+
+    function updateDiagnostic() {
+      if (!MOSTRA_DIAGNOSTICA) return;
+      const box = document.querySelector('.photo-box');
+      const wanted = parseFloat(
+        getComputedStyle(document.documentElement)
+          .getPropertyValue('--dimensione-foto')
+      );
+      diag.hidden = false;
+      diag.textContent =
+        'Larghezza area disponibile: ' + Math.round(window.innerWidth) + 'px' +
+        ' | foto richiesta: ' + wanted + 'px' +
+        ' | foto reale: ' + (box ? Math.round(box.getBoundingClientRect().width) : '-') + 'px';
+    }
+
+    let allItems = [];
+    let heightFrame = 0;
+    let lastHeight = 0;
+
+    /*
+      Comunica a WordPress l'altezza reale del contenuto.
+      Richiede il listener nel codice di incorporamento.
+    */
+    function reportHeight() {
+      if (heightFrame) return;
+
+      heightFrame = requestAnimationFrame(function () {
+        heightFrame = 0;
+        updateDiagnostic();
+
+        const height = Math.ceil(
+          shell.getBoundingClientRect().height
+        ) + 2;
+
+        if (height === lastHeight) return;
+        lastHeight = height;
+
+        if (window.parent !== window) {
+          window.parent.postMessage(
+            {
+              type: 'gallery-height',
+              height: height
+            },
+            '*'
+          );
+        }
+      });
+    }
+
+    function showMessage(text) {
+      message.textContent = text;
+      message.hidden = false;
+      reportHeight();
+    }
+
+    function normalizeHeader(value) {
+      return String(value || '')
+        .replace(/^\uFEFF/, '')
+        .trim()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, ' ')
+        .toUpperCase();
+    }
+
+    function searchableText(value) {
+      return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLocaleLowerCase('it');
+    }
+
+    function parseCsv(text) {
+      const rows = [];
+      let row = [];
+      let value = '';
+      let quoted = false;
+
+      text = text.replace(/^\uFEFF/, '');
+
+      for (let index = 0; index < text.length; index++) {
+        const character = text[index];
+
+        if (quoted) {
+          if (character === '"' && text[index + 1] === '"') {
+            value += '"';
+            index++;
+          } else if (character === '"') {
+            quoted = false;
+          } else {
+            value += character;
+          }
+        } else if (character === '"') {
+          quoted = true;
+        } else if (character === ',') {
+          row.push(value.trim());
+          value = '';
+        } else if (character === '\n' || character === '\r') {
+          if (character === '\r' && text[index + 1] === '\n') {
+            index++;
+          }
+
+          row.push(value.trim());
+          rows.push(row);
+          row = [];
+          value = '';
+        } else {
+          value += character;
+        }
+      }
+
+      if (quoted) {
+        throw new Error('Il CSV contiene virgolette non chiuse.');
+      }
+
+      if (value || row.length) {
+        row.push(value.trim());
+        rows.push(row);
+      }
+
+      return rows.filter(function (cells) {
+        return cells.some(function (cell) {
+          return cell !== '';
+        });
+      });
+    }
+
+    function itemsFromCsv(text) {
+      const rows = parseCsv(text);
+      if (!rows.length) return [];
+
+      const headers = rows.shift().map(normalizeHeader);
+
+      const required = [
+        'NOME',
+        'COGNOME',
+        'ATTIVITA',
+        'UNIVERSITA',
+        'URL IMMAGINE',
+        'PUBBLICA'
+      ];
+
+      const missing = required.filter(function (name) {
+        return !headers.includes(name);
+      });
+
+      if (missing.length) {
+        throw new Error(
+          'Colonne mancanti nel foglio: ' + missing.join(', ') + '.'
+        );
+      }
+
+      return rows.map(function (row) {
+        return Object.fromEntries(
+          headers.map(function (header, index) {
+            return [header, row[index] || ''];
+          })
+        );
+      }).filter(function (item) {
+        const pubblica = normalizeHeader(item.PUBBLICA);
+        return (item.NOME || item.COGNOME) &&
+          (pubblica === 'TRUE' || pubblica === 'VERO');
+      });
+    }
+
+    function safeHttpUrl(value) {
+      const text = String(value || '').trim();
+      if (!text) return '';
+
+      try {
+        const url = new URL(text);
+
+        return ['http:', 'https:'].includes(url.protocol)
+          ? url.href
+          : '';
+      } catch (error) {
+        return '';
+      }
+    }
+
+    function createPlaceholder(item) {
+      const placeholder = document.createElement('div');
+      placeholder.className = 'photo-placeholder';
+      placeholder.setAttribute('aria-hidden', 'true');
+
+      placeholder.textContent = [item.NOME, item.COGNOME]
+        .filter(Boolean)
+        .map(function (part) {
+          return Array.from(part.trim())[0] || '';
+        })
+        .join('')
+        .toLocaleUpperCase('it');
+
+      return placeholder;
+    }
+
+    function createCard(item) {
+      const fullName = [item.NOME, item.COGNOME]
+        .filter(Boolean)
+        .join(' ');
+
+      const article = document.createElement('article');
+      article.className = 'card';
+
+      const photoBox = document.createElement('div');
+      photoBox.className = 'photo-box';
+
+      /* Etichetta sulla foto */
+      const extras = [];
+
+      if (POSIZIONE_UNIVERSITA === 'badge' && item.UNIVERSITA) {
+        const badge = document.createElement('span');
+        badge.className = 'badge';
+        badge.textContent = item.UNIVERSITA;
+        extras.push(badge);
+      }
+
+      const photoUrl = safeHttpUrl(item['URL IMMAGINE']);
+
+      if (photoUrl) {
+        const image = document.createElement('img');
+        image.className = 'student-photo';
+        image.src = photoUrl;
+        image.alt = '';
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        image.referrerPolicy = 'no-referrer';
+
+        image.addEventListener('load', reportHeight);
+
+        image.addEventListener('error', function () {
+          photoBox.replaceChildren(createPlaceholder(item), ...extras);
+          reportHeight();
+        });
+
+        photoBox.append(image, ...extras);
+      } else {
+        photoBox.append(createPlaceholder(item), ...extras);
+      }
+
+      const body = document.createElement('div');
+      body.className = 'card-body';
+
+      const title = document.createElement('h2');
+      title.className = 'card-title';
+      title.textContent = fullName;
+      body.appendChild(title);
+
+      /* Descrizione: attivita' (+ universita' se richiesto sotto forma di testo) */
+      const description = [
+        item.ATTIVITA,
+        POSIZIONE_UNIVERSITA === 'testo' ? item.UNIVERSITA : ''
+      ].filter(Boolean).join('\n');
+
+      if (description) {
+        const activity = document.createElement('p');
+        activity.className = 'card-activity';
+        activity.textContent = description;
+        body.appendChild(activity);
+      }
+
+      const destination = safeHttpUrl(item.LINK);
+
+      if (destination) {
+        const button = document.createElement('a');
+        button.className = 'card-button';
+        button.href = destination;
+        button.target = '_blank';
+        button.rel = 'noopener noreferrer';
+        button.textContent = TESTO_PULSANTE;
+        button.setAttribute('aria-label', TESTO_PULSANTE + ' ' + fullName);
+        body.appendChild(button);
+      }
+
+      article.append(photoBox, body);
+      return article;
+    }
+
+    function renderItems(items, filtered) {
+      const fragment = document.createDocumentFragment();
+
+      items.forEach(function (item) {
+        fragment.appendChild(createCard(item));
+      });
+
+      gallery.replaceChildren(fragment);
+      message.hidden = true;
+
+      searchStatus.textContent = filtered
+        ? items.length + (
+            items.length === 1
+              ? ' risultato trovato'
+              : ' risultati trovati'
+          )
+        : '';
+
+      if (!items.length) {
+        showMessage(
+          filtered
+            ? 'Nessun docente corrisponde alla ricerca.'
+            : 'Nessun docente è attualmente pubblicato.'
+        );
+      }
+
+      reportHeight();
+    }
+
+    function filterGallery() {
+      const query = searchableText(searchInput.value.trim());
+      const terms = query.split(/\s+/).filter(Boolean);
+
+      if (!terms.length) {
+        renderItems(allItems, false);
+        return;
+      }
+
+      const filtered = allItems.filter(function (item) {
+        const text = searchableText(
+          [
+            item.NOME,
+            item.COGNOME,
+            item.ATTIVITA,
+            item.UNIVERSITA
+          ].join(' ')
+        );
+
+        return terms.every(function (term) {
+          return text.includes(term);
+        });
+      });
+
+      renderItems(filtered, true);
+    }
+
+    async function loadGallery() {
+      const controller = new AbortController();
+
+      const timeout = setTimeout(function () {
+        controller.abort();
+      }, 25000);
+
+      try {
+        const response = await fetch(CSV_URL, {
+          cache: 'no-store',
+          signal: controller.signal
+        });
+
+        if (!response.ok) {
+          throw new Error('Errore HTTP ' + response.status + '.');
+        }
+
+        const text = await response.text();
+
+        if (/^\s*</.test(text)) {
+          throw new Error(
+            'Il collegamento restituisce una pagina HTML invece del CSV.'
+          );
+        }
+
+        allItems = itemsFromCsv(text);
+        renderItems(allItems, false);
+        searchInput.disabled = false;
+      } catch (error) {
+        console.error(error);
+
+        const detail = error.name === 'AbortError'
+          ? 'Il foglio Google non ha risposto in tempo.'
+          : error.message;
+
+        showMessage(
+          'Impossibile caricare i dati. ' +
+          detail +
+          ' Verifica che il foglio sia pubblicato sul web come CSV.'
+        );
+      } finally {
+        clearTimeout(timeout);
+        gallery.setAttribute('aria-busy', 'false');
+        reportHeight();
+      }
+    }
+
+    searchInput.addEventListener('input', filterGallery);
+    window.addEventListener('load', reportHeight);
+    window.addEventListener('resize', reportHeight);
+
+    if ('ResizeObserver' in window) {
+      const observer = new ResizeObserver(reportHeight);
+      observer.observe(shell);
+    }
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(reportHeight);
+    }
+
+    loadGallery();
+  </script>
+</body>
+</html>
