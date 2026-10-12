@@ -15,7 +15,7 @@
     /* =====================================================================
        GUIDA ALLA PERSONALIZZAZIONE
        Modifica SOLO i valori nel blocco ":root" qui sotto, poi salva e ricarica.
-       I testi del pulsante e la posizione dell'universita' si cambiano nel
+       I testi del pulsante e la posizione dell'afferenza si cambiano nel
        blocco "IMPOSTAZIONI" all'inizio del <script>.
 
        FOTO (occupa tutta la larghezza della scheda, a filo dei bordi)
@@ -31,7 +31,7 @@
        --font-testo / --font-titolo   famiglie di caratteri (Google Fonts: vedi sotto)
        --dim-titolo / --peso-titolo   nome del docente
        --dim-attivita                 biografia e titolo seminario
-       --dim-badge                    etichetta sulla foto (universita')
+       --dim-badge                    etichetta sulla foto (afferenza)
        --dim-pulsante                 testo del pulsante
        --colore-...                   colori in formato #rrggbb
 
@@ -311,7 +311,7 @@
         id="gallery-search"
         class="search-input"
         type="search"
-        placeholder="Cerca per nome, bio, seminario o università…"
+        placeholder="Cerca per nome, afferenza, seminario, contenuto o bio…"
         autocomplete="off"
         disabled
       >
@@ -342,7 +342,7 @@
       FOGLIO GOOGLE PUBBLICATO COME CSV
 
       Colonne:
-      Nome | Cognome | bio | titolo seminario | Università | url immagine | pubblica
+      Nome | Cognome | Afferenza | titolo seminario | contenuto | bio | url immagine | pubblica
 
       Solo le righe con pubblica spuntata (TRUE o VERO) vengono mostrate.
 
@@ -359,11 +359,11 @@
     const searchStatus = document.getElementById('search-status');
 
     /* ===================== IMPOSTAZIONI ===================== */
-    /* Dove mostrare l'universita':
+    /* Dove mostrare l'afferenza:
          'badge'    = etichetta scura sopra la foto (come nell'esempio)
          'testo'    = riga di testo sotto la bio
          'nascosta' = non mostrarla (resta comunque cercabile) */
-    const POSIZIONE_UNIVERSITA = 'badge';
+    const POSIZIONE_AFFERENZA = 'badge';
 
     /* Testo del pulsante (appare solo se la colonna LINK e' compilata) */
     const TESTO_PULSANTE = 'Scopri di più →';
@@ -509,8 +509,9 @@
         'NOME',
         'COGNOME',
         'BIO',
+        'CONTENUTO',
         'TITOLO SEMINARIO',
-        'UNIVERSITA',
+        'AFFERENZA',
         'URL IMMAGINE',
         'PUBBLICA'
       ];
@@ -583,10 +584,10 @@
       /* Etichetta sulla foto */
       const extras = [];
 
-      if (POSIZIONE_UNIVERSITA === 'badge' && item.UNIVERSITA) {
+      if (POSIZIONE_AFFERENZA === 'badge' && item.AFFERENZA) {
         const badge = document.createElement('span');
         badge.className = 'badge';
-        badge.textContent = item.UNIVERSITA;
+        badge.textContent = item.AFFERENZA;
         extras.push(badge);
       }
 
@@ -628,9 +629,16 @@
         seminar.textContent = item['TITOLO SEMINARIO'];
         body.appendChild(seminar);
       }
+      if (item.CONTENUTO) {
+        const content = document.createElement('p');
+        content.className = 'card-activity';
+        content.textContent = item.CONTENUTO;
+        body.appendChild(content);
+      }
+
       const description = [
         item.BIO,
-        POSIZIONE_UNIVERSITA === 'testo' ? item.UNIVERSITA : ''
+        POSIZIONE_AFFERENZA === 'testo' ? item.AFFERENZA : ''
       ].filter(Boolean).join('\n');
 
       if (description) {
@@ -701,8 +709,9 @@
             item.NOME,
             item.COGNOME,
             item.BIO,
+            item.CONTENUTO,
             item['TITOLO SEMINARIO'],
-            item.UNIVERSITA
+            item.AFFERENZA
           ].join(' ')
         );
 
