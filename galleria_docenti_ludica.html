@@ -345,7 +345,7 @@
       FOGLIO GOOGLE PUBBLICATO COME CSV
 
       Colonne:
-      TITOLO LEZIONE | DOCENTE | LUOGO | ORA | DATA | Tema | IMMAGINE | FASE | BIO RELATORE | Affiliazione
+      TITOLO LEZIONE | DOCENTE | LUOGO | ORE | DATA | Tema | IMMAGINE | FASE | BIO RELATORE | Affiliazione
 
       Ogni riga con DOCENTE o TITOLO LEZIONE compilato viene mostrata.
       Non è richiesta una colonna PUBBLICA. Le colonne vuote vengono ignorate.
@@ -514,7 +514,7 @@
         'TITOLO LEZIONE',
         'DOCENTE',
         'LUOGO',
-        'ORA',
+        'ORE',
         'DATA',
         'TEMA',
         'IMMAGINE',
@@ -646,7 +646,7 @@
       }
       if (fullName) appendField('Titolo lezione', item['TITOLO LEZIONE'], true);
       appendField('Luogo', item.LUOGO);
-      appendField('Ora', item.ORA);
+      appendField('Ore', item.ORE);
       appendField('Data', item.DATA);
       appendField('Tema', item.TEMA);
       appendField('Fase', item.FASE);
@@ -713,7 +713,7 @@
             item.DOCENTE,
             item['TITOLO LEZIONE'],
             item.LUOGO,
-            item.ORA,
+            item.ORE,
             item.DATA,
             item.TEMA,
             item.FASE,
