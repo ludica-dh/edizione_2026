@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Galleria docenti LUDiCa</title>
+  <title>Galleria docenti e seminari LUDiCa</title>
 
   <!-- FONT GOOGLE: per cambiare font modifica i nomi qui e in --font-testo / --font-titolo -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,8 +30,8 @@
        TESTO
        --font-testo / --font-titolo   famiglie di caratteri (Google Fonts: vedi sotto)
        --dim-titolo / --peso-titolo   nome del docente
-       --dim-attivita                 biografia e titolo seminario
-       --dim-badge                    etichetta sulla foto (afferenza)
+       --dim-attivita                 biografia e titolo lezione
+       --dim-badge                    etichetta sulla foto (affiliazione)
        --dim-pulsante                 testo del pulsante
        --colore-...                   colori in formato #rrggbb
 
@@ -314,7 +314,7 @@
         id="gallery-search"
         class="search-input"
         type="search"
-        placeholder="Cerca per nome, afferenza, seminario, contenuto o bio…"
+        placeholder="Cerca per docente, lezione, luogo, data, tema o affiliazione…"
         autocomplete="off"
         disabled
       >
@@ -335,7 +335,7 @@
     <section
       id="gallery"
       class="gallery"
-      aria-label="Docenti LUDiCa"
+      aria-label="Docenti e seminari LUDiCa"
       aria-busy="true"
     ></section>
   </main>
@@ -345,15 +345,17 @@
       FOGLIO GOOGLE PUBBLICATO COME CSV
 
       Colonne:
-      Nome | Cognome | afferenza | titolo seminario | contenuto | bio | url immagine | pubblica
+      TITOLO LEZIONE | DOCENTE | LUOGO | ORA | DATA | Tema | IMMAGINE | FASE | BIO RELATORE | Affiliazione
 
-      Solo le righe con pubblica spuntata (TRUE o VERO) vengono mostrate.
+      Ogni riga con DOCENTE o TITOLO LEZIONE compilato viene mostrata.
+      Non è richiesta una colonna PUBBLICA. Le colonne vuote vengono ignorate.
+      L’ordine delle lezioni e i valori di DATA e ORA restano quelli del foglio.
 
       Colonna facoltativa:
       LINK
     */
     const CSV_URL =
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vS34F0w8wxRcuKCdA6U47ZME5g8MER3REtlrlt5arjiPB79oEepkWAFECBd2NbFfKPzEHlmMxkoLGWS/pub?gid=1374600471&single=true&output=csv';
+      'https://docs.google.com/spreadsheets/d/e/2PACX-1vS34F0w8wxRcuKCdA6U47ZME5g8MER3REtlrlt5arjiPB79oEepkWAFECBd2NbFfKPzEHlmMxkoLGWS/pub?gid=705040451&single=true&output=csv';
 
     const shell = document.getElementById('gallery-shell');
     const gallery = document.getElementById('gallery');
@@ -362,7 +364,7 @@
     const searchStatus = document.getElementById('search-status');
 
     /* ===================== IMPOSTAZIONI ===================== */
-    /* Dove mostrare l'afferenza:
+    /* Dove mostrare l’affiliazione:
          'badge'    = etichetta scura sopra la foto (come nell'esempio)
          'testo'    = riga di testo sotto la bio
          'nascosta' = non mostrarla (resta comunque cercabile) */
@@ -373,7 +375,7 @@
     /* ======================================================== */
 
     /* DIAGNOSTICA: metti false quando hai finito di regolare la dimensione */
-    const MOSTRA_DIAGNOSTICA = true;
+    const MOSTRA_DIAGNOSTICA = false;
     const diag = document.getElementById('diagnostica');
 
     function updateDiagnostic() {
@@ -509,14 +511,16 @@
       const headers = rows.shift().map(normalizeHeader);
 
       const required = [
-        'NOME',
-        'COGNOME',
-        'BIO',
-        'CONTENUTO',
-        'TITOLO SEMINARIO',
-        'AFFERENZA',
-        'URL IMMAGINE',
-        'PUBBLICA'
+        'TITOLO LEZIONE',
+        'DOCENTE',
+        'LUOGO',
+        'ORA',
+        'DATA',
+        'TEMA',
+        'IMMAGINE',
+        'FASE',
+        'BIO RELATORE',
+        'AFFILIAZIONE'
       ];
 
       const missing = required.filter(function (name) {
@@ -531,14 +535,12 @@
 
       return rows.map(function (row) {
         return Object.fromEntries(
-          headers.map(function (header, index) {
-            return [header, row[index] || ''];
+          headers.flatMap(function (header, index) {
+            return header ? [[header, row[index] || '']] : [];
           })
         );
       }).filter(function (item) {
-        const pubblica = normalizeHeader(item.PUBBLICA);
-        return (item.NOME || item.COGNOME) &&
-          (pubblica === 'TRUE' || pubblica === 'VERO');
+        return Boolean(item.DOCENTE || item['TITOLO LEZIONE']);
       });
     }
 
@@ -562,8 +564,9 @@
       placeholder.className = 'photo-placeholder';
       placeholder.setAttribute('aria-hidden', 'true');
 
-      placeholder.textContent = [item.NOME, item.COGNOME]
+      placeholder.textContent = String(item.DOCENTE || item['TITOLO LEZIONE'] || '?').split(/\s+/)
         .filter(Boolean)
+        .slice(0, 2)
         .map(function (part) {
           return Array.from(part.trim())[0] || '';
         })
@@ -574,9 +577,7 @@
     }
 
     function createCard(item) {
-      const fullName = [item.NOME, item.COGNOME]
-        .filter(Boolean)
-        .join(' ');
+      const fullName = item.DOCENTE || '';
 
       const article = document.createElement('article');
       article.className = 'card';
@@ -587,14 +588,14 @@
       /* Etichetta sulla foto */
       const extras = [];
 
-      if (POSIZIONE_AFFERENZA === 'badge' && item.AFFERENZA) {
+      if (POSIZIONE_AFFERENZA === 'badge' && item.AFFILIAZIONE) {
         const badge = document.createElement('span');
         badge.className = 'badge';
-        badge.textContent = 'Afferenza: ' + item.AFFERENZA;
+        badge.textContent = 'Affiliazione: ' + item.AFFILIAZIONE;
         extras.push(badge);
       }
 
-      const photoUrl = safeHttpUrl(item['URL IMMAGINE']);
+      const photoUrl = safeHttpUrl(item.IMMAGINE);
 
       if (photoUrl) {
         const image = document.createElement('img');
@@ -622,7 +623,7 @@
 
       const title = document.createElement('h2');
       title.className = 'card-title';
-      title.textContent = fullName;
+      title.textContent = fullName || item['TITOLO LEZIONE'];
       body.appendChild(title);
 
       /* Campi distinti del CSV: nessun testo viene troncato. */
@@ -641,11 +642,15 @@
       }
 
       if (POSIZIONE_AFFERENZA === 'testo') {
-        appendField('Afferenza', item.AFFERENZA);
+        appendField('Affiliazione', item.AFFILIAZIONE);
       }
-      appendField('Titolo seminario', item['TITOLO SEMINARIO'], true);
-      appendField('Contenuto', item.CONTENUTO);
-      appendField('Bio', item.BIO);
+      if (fullName) appendField('Titolo lezione', item['TITOLO LEZIONE'], true);
+      appendField('Luogo', item.LUOGO);
+      appendField('Ora', item.ORA);
+      appendField('Data', item.DATA);
+      appendField('Tema', item.TEMA);
+      appendField('Fase', item.FASE);
+      appendField('Bio relatore', item['BIO RELATORE']);
 
       const destination = safeHttpUrl(item.LINK);
 
@@ -680,13 +685,13 @@
               ? ' risultato trovato'
               : ' risultati trovati'
           )
-        : '';
+        : items.length + (items.length === 1 ? ' lezione' : ' lezioni');
 
       if (!items.length) {
         showMessage(
           filtered
-            ? 'Nessun docente corrisponde alla ricerca.'
-            : 'Nessun docente è attualmente pubblicato.'
+            ? 'Nessuna lezione corrisponde alla ricerca.'
+            : 'Nessuna lezione presente nel foglio.'
         );
       }
 
@@ -705,12 +710,15 @@
       const filtered = allItems.filter(function (item) {
         const text = searchableText(
           [
-            item.NOME,
-            item.COGNOME,
-            item.BIO,
-            item.CONTENUTO,
-            item['TITOLO SEMINARIO'],
-            item.AFFERENZA
+            item.DOCENTE,
+            item['TITOLO LEZIONE'],
+            item.LUOGO,
+            item.ORA,
+            item.DATA,
+            item.TEMA,
+            item.FASE,
+            item['BIO RELATORE'],
+            item.AFFILIAZIONE
           ].join(' ')
         );
 
