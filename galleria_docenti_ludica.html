@@ -28,12 +28,17 @@
                             center center = centro
 
        TESTO
-       --font-testo / --font-titolo   famiglie di caratteri (Google Fonts: vedi sotto)
-       --dim-titolo / --peso-titolo   nome del docente
-       --dim-attivita                 biografia e titolo lezione
-       --dim-badge                    etichetta sulla foto (affiliazione)
-       --dim-pulsante                 testo del pulsante
-       --colore-...                   colori in formato #rrggbb
+       Tutte le dimensioni sono nel blocco FONT E DIMENSIONI di :root.
+       --dim-docente / --dim-lezione / --dim-bio: testi principali.
+       --dim-luogo / --dim-data / --dim-ore / --dim-tema / --dim-fase: dettagli.
+       --dim-affiliazione: affiliazione nel testo o sopra la foto.
+       --dim-etichette: titoletti dei campi (es. "Bio relatore").
+       --dim-etichetta-ricerca / --dim-ricerca / --dim-stato: ricerca e conteggio.
+       --dim-messaggi / --dim-pulsante / --dim-iniziali / --dim-diagnostica.
+       Cambia i valori in px: un numero maggiore ingrandisce il testo.
+       --interlinea-testi / --interlinea-bio regolano lo spazio fra le righe.
+       --font-testo / --font-titolo scelgono le famiglie di caratteri.
+       --colore-... controlla i colori in formato #rrggbb.
 
        SCHEDA
        --raggio-scheda      arrotondamento degli angoli (0px = squadrata)
@@ -56,15 +61,30 @@
       --posizione-foto: center top;
       --sfondo-foto: #eef1f5;
 
-      /* ---- FONT E DIMENSIONI ---- */
+      /* ---- FONT E DIMENSIONI: modifica qui tutti i testi ---- */
       --font-testo: "Source Sans 3", Arial, Helvetica, sans-serif;
       --font-titolo: "Fraunces", Georgia, "Times New Roman", serif;
-      --dim-titolo: 26px;
+      --dim-base: 17px;                 /* Testo generale */
+      --dim-docente: 26px;              /* Nome del docente */
+      --dim-lezione: 15px;              /* Titolo della lezione */
+      --dim-bio: 12px;                  /* Biografia del relatore */
+      --dim-affiliazione: 15px;         /* Affiliazione, anche nel badge */
+      --dim-luogo: 17px;                /* Luogo */
+      --dim-data: 17px;                 /* Data */
+      --dim-ore: 17px;                  /* Orario */
+      --dim-tema: 17px;                 /* Tema */
+      --dim-fase: 17px;                 /* Fase */
+      --dim-etichette: 14px;            /* Titoletti sopra i campi */
+      --dim-etichetta-ricerca: 16px;    /* "Cerca nella galleria" */
+      --dim-ricerca: 17px;              /* Testo e suggerimento nella ricerca */
+      --dim-stato: 14px;                /* Conteggio lezioni e risultati */
+      --dim-messaggi: 17px;             /* Caricamento, errori, nessun risultato */
+      --dim-pulsante: 16px;             /* "Scopri di più" */
+      --dim-iniziali: 64px;             /* Iniziali se manca la foto */
+      --dim-diagnostica: 14px;          /* Diagnostica, quando attivata */
       --peso-titolo: 700;
-      --dim-attivita: 17px;
-      --dim-badge: 15px;
-      --dim-pulsante: 16px;
-      --dim-ricerca: 17px;
+      --interlinea-testi: 1.55;
+      --interlinea-bio: 1.6;
 
       /* ---- COLORI ---- */
       --sfondo: #ffffff;
@@ -97,6 +117,7 @@
       background: var(--sfondo);
       color: var(--colore-titolo);
       font-family: var(--font-testo);
+      font-size: var(--dim-base);
     }
 
     /* Barre di scorrimento nascoste SOLO quando la galleria e' dentro un iframe
@@ -120,7 +141,7 @@
     .search-label {
       display: block;
       margin-bottom: 10px;
-      font-size: calc(var(--dim-ricerca) - 1px);
+      font-size: var(--dim-etichetta-ricerca);
       font-weight: 600;
       color: var(--colore-attivita);
     }
@@ -151,7 +172,7 @@
       min-height: 20px;
       margin: 10px 20px 0;
       color: #6a7487;
-      font-size: 14px;
+      font-size: var(--dim-stato);
     }
 
     /* Griglia: colonne di larghezza esatta = --dimensione-foto */
@@ -210,7 +231,7 @@
       background: #e3e8f0;
       color: #5a6a85;
       font-family: var(--font-titolo);
-      font-size: clamp(32px, 8vw, 72px);
+      font-size: var(--dim-iniziali);
       font-weight: 600;
     }
 
@@ -223,7 +244,7 @@
       border-radius: 9px;
       background: var(--colore-badge);
       color: #fff;
-      font-size: var(--dim-badge);
+      font-size: var(--dim-affiliazione);
       font-weight: 600;
       line-height: 1.3;
       backdrop-filter: blur(3px);
@@ -239,7 +260,7 @@
     .card-title {
       margin: 0 0 10px;
       font-family: var(--font-titolo);
-      font-size: var(--dim-titolo);
+      font-size: var(--dim-docente);
       font-weight: var(--peso-titolo);
       line-height: 1.2;
       color: var(--colore-titolo);
@@ -247,16 +268,28 @@
 
     .card-activity {
       margin: 0 0 22px;
-      font-size: var(--dim-attivita);
-      line-height: 1.55;
+      font-size: var(--dim-base);
+      line-height: var(--interlinea-testi);
       color: var(--colore-attivita);
       white-space: pre-line;
     }
 
-    .field-label { margin: 0 0 6px; font: inherit; font-size: 14px; font-weight: 600; color: var(--colore-attivita); }
+    .field-label { margin: 0 0 6px; font: inherit; font-size: var(--dim-etichette); font-weight: 600; color: var(--colore-attivita); }
     .card-field { min-width: 0; }
 
     .card-seminar { font-weight: 600; color: var(--colore-titolo); }
+
+    /* Ogni campo ha una dimensione indipendente. */
+    .field-lezione .card-activity, .card-title.title-lezione { font-size: var(--dim-lezione); }
+    .field-bio .card-activity { font-size: var(--dim-bio); line-height: var(--interlinea-bio); }
+    .field-affiliazione .card-activity { font-size: var(--dim-affiliazione); }
+    .field-luogo .card-activity { font-size: var(--dim-luogo); }
+    .field-data .card-activity { font-size: var(--dim-data); }
+    .field-ore .card-activity { font-size: var(--dim-ore); }
+    .field-tema .card-activity { font-size: var(--dim-tema); }
+    .field-fase .card-activity { font-size: var(--dim-fase); }
+    #diagnostica { font-size: var(--dim-diagnostica); }
+
 
     /* Pulsante: il suo ::after copre tutta la scheda, che diventa cliccabile */
     .card-button {
@@ -276,13 +309,14 @@
     .card-button:focus-visible { outline: 3px solid var(--accento); outline-offset: 3px; }
 
     .message {
+      font-size: var(--dim-messaggi);
       max-width: 760px;
       margin: 20px auto;
       padding: 18px 22px;
       border: 1px solid var(--bordo);
       border-radius: 12px;
       background: #f7f9fc;
-      line-height: 1.55;
+      line-height: var(--interlinea-testi);
       overflow-wrap: anywhere;
     }
 
@@ -628,7 +662,7 @@
       body.className = 'card-body';
 
       const title = document.createElement('h2');
-      title.className = 'card-title';
+      title.className = fullName ? 'card-title' : 'card-title title-lezione';
       title.textContent = fullName || item['TITOLO LEZIONE'];
       body.appendChild(title);
 
@@ -636,7 +670,17 @@
       function appendField(label, value, emphasis = false) {
         if (!String(value || '').trim()) return;
         const field = document.createElement('div');
-        field.className = 'card-field';
+        const fieldTypes = {
+          'Titolo lezione': 'lezione',
+          'Bio relatore': 'bio',
+          'Affiliazione': 'affiliazione',
+          'Luogo': 'luogo',
+          'Data': 'data',
+          'Ore': 'ore',
+          'Tema': 'tema',
+          'Fase': 'fase'
+        };
+        field.className = 'card-field field-' + fieldTypes[label];
         const heading = document.createElement('h3');
         heading.className = 'field-label';
         heading.textContent = label;
