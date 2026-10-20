@@ -345,11 +345,11 @@
       FOGLIO GOOGLE PUBBLICATO COME CSV
 
       Colonne:
-      TITOLO LEZIONE | DOCENTE | LUOGO | ORE | DATA | Tema | IMMAGINE | FASE | BIO RELATORE | Affiliazione
+      TITOLO LEZIONE | DOCENTE | LUOGO | DATA | ORE | Tema | IMMAGINE | FASE | BIO RELATORE | Affiliazione
 
       Ogni riga con DOCENTE o TITOLO LEZIONE compilato viene mostrata.
       Non è richiesta una colonna PUBBLICA. Le colonne vuote vengono ignorate.
-      L’ordine delle lezioni e i valori di DATA e ORA restano quelli del foglio.
+      L’ordine delle lezioni e i valori di DATA e ORE restano quelli del foglio.
 
       Colonna facoltativa:
       LINK
@@ -508,7 +508,11 @@
       const rows = parseCsv(text);
       if (!rows.length) return [];
 
-      const headers = rows.shift().map(normalizeHeader);
+      // Le colonne possono essere in qualsiasi ordine. ORA è un alias di ORE.
+      const headers = rows.shift().map(function (value) {
+        const name = normalizeHeader(value);
+        return name === 'ORA' ? 'ORE' : name;
+      });
 
       const required = [
         'TITOLO LEZIONE',
@@ -529,7 +533,9 @@
 
       if (missing.length) {
         throw new Error(
-          'Colonne mancanti nel foglio: ' + missing.join(', ') + '.'
+          'Colonne mancanti nel CSV pubblicato: ' + missing.join(', ') +
+          '. Intestazioni ricevute: ' + headers.filter(Boolean).join(' | ') +
+          '. Controlla la prima riga del foglio e il foglio selezionato nel collegamento CSV.'
         );
       }
 
@@ -646,8 +652,8 @@
       }
       if (fullName) appendField('Titolo lezione', item['TITOLO LEZIONE'], true);
       appendField('Luogo', item.LUOGO);
-      appendField('Ore', item.ORE);
       appendField('Data', item.DATA);
+      appendField('Ore', item.ORE);
       appendField('Tema', item.TEMA);
       appendField('Fase', item.FASE);
       appendField('Bio relatore', item['BIO RELATORE']);
