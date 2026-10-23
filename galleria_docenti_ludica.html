@@ -19,8 +19,11 @@
        blocco "IMPOSTAZIONI" all'inizio del <script>.
 
        FOTO (occupa tutta la larghezza della scheda, a filo dei bordi)
-       --dimensione-foto    larghezza esatta della scheda/foto (es. 320px, 420px, 600px).
-                            Se l'area e' piu' stretta, la scheda occupa tutta la larghezza.
+       --larghezza-minima-scheda  larghezza minima indicativa (es. 280px, 300px, 360px).
+                                  Valori minori consentono più colonne.
+                                  Le schede si allargano per riempire la riga.
+                                  Se lo spazio è inferiore, compare una sola colonna.
+       Il numero di colonne dipende dallo spazio disponibile, anche negli iframe.
        --formato-foto       1 / 1 quadrato, 4 / 5 verticale, 3 / 4 ritratto, 4 / 3 largo
        --adattamento-foto   cover = riempie lo spazio (taglia i bordi)
                             contain = foto intera (puo' lasciare bande vuote)
@@ -55,7 +58,7 @@
 
     :root {
       /* ---- FOTO ---- */
-      --dimensione-foto: 420px;
+      --larghezza-minima-scheda: 300px;
       --formato-foto: 1 / 1;
       --adattamento-foto: cover;
       --posizione-foto: center top;
@@ -175,12 +178,12 @@
       font-size: var(--dim-stato);
     }
 
-    /* Griglia: colonne di larghezza esatta = --dimensione-foto */
+    /* Griglia adattiva: aggiunge colonne quando c’è spazio e riempie la riga. */
     .gallery {
       display: grid;
       grid-template-columns: repeat(
         auto-fill,
-        minmax(min(100%, var(--dimensione-foto)), var(--dimensione-foto))
+        minmax(min(100%, var(--larghezza-minima-scheda)), 1fr)
       );
       justify-content: center;
       gap: var(--spazio-righe) var(--spazio-colonne);
@@ -417,12 +420,12 @@
       const box = document.querySelector('.photo-box');
       const wanted = parseFloat(
         getComputedStyle(document.documentElement)
-          .getPropertyValue('--dimensione-foto')
+          .getPropertyValue('--larghezza-minima-scheda')
       );
       diag.hidden = false;
       diag.textContent =
         'Larghezza area disponibile: ' + Math.round(window.innerWidth) + 'px' +
-        ' | foto richiesta: ' + wanted + 'px' +
+        ' | larghezza minima scheda: ' + wanted + 'px' +
         ' | foto reale: ' + (box ? Math.round(box.getBoundingClientRect().width) : '-') + 'px';
     }
 
